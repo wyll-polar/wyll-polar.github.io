@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
+      function hideEmptySummarySections() {
+        const sections = document.querySelectorAll("#summaryContent > h3");
+        sections.forEach(heading => {
+          const content = heading.nextElementSibling;
+          let isEmpty = true;
+
+          // Check subsequent siblings until the next <h3> or end
+          let next = content;
+          while (next && next.tagName !== "H3") {
+            if (next.textContent.trim() !== "") {
+              isEmpty = false;
+              break;
+            }
+            next = next.nextElementSibling;
+          }
+
+          if (isEmpty) {
+            heading.style.display = "none";
+            next = heading.nextElementSibling;
+            while (next && next.tagName !== "H3") {
+              next.style.display = "none";
+              next = next.nextElementSibling;
+            }
+          }
+        });
+      }
+
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research Intake Form</title>
+  <style>
+    /* General layout and spacing */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f0f2f5;
+      color: #333;
+    }
+
+    header {
+      background: #003366;
+      color: white;
+      padding: 1em;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 2em auto;
+      background: white;
+      padding: 2em;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0.25em;
+      margin-bottom: 1em;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5em;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.5em;
+      margin-bottom: 1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    input[type="radio"],
+    input[type="checkbox"] {
+      width: auto;
+      margin-right: 0.5em;
+      vertical-align: middle;
+    }
+
+    /* Table formatting */
+    table {
+      width: 100%;
+      margin-bottom: 1em;
+      border-collapse: collapse;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 0.5em;
+      text-align: left;
+    }
+
+    th {
+      background: #f4f4f4;
+    }
+
+    /* Buttons */
+    .button {
+      background: #0066cc;
+      color: white;
+      border: none;
+      padding: 0.75em 1.5em;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .button:hover {
+      background: #004d99;
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      width: 100%;
+      background: #eee;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 1em;
+    }
+
+    .progress-bar-inner {
+      height: 20px;
+      background: #0066cc;
+      width: 0;
+      transition: width 0.3s ease;
+    }
+
+    /* ✅ FIX: Align checkboxes and radios nicely beside their labels */
+    .option-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5em;
+      margin-bottom: 1.5em;
+    }
+
+    .option-block label {
+      font-weight: normal;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .option-block input[type="radio"],
+    .option-block input[type="checkbox"] {
+      margin-right: 0.5em;
+      vertical-align: middle;
+    }
+  </style>
+
+
+
+</head>
+
+<body>
+  <header>
+    <h1>Research Intake Form</h1>
+  </header>
+
+  <div class="container">
+    <div class="progress-bar">
+      <div class="progress-bar-inner" id="progressBar"></div>
+    </div>
+
+    <form id="intakeForm">
+
+
+
+      <input type="hidden" name="application_id" id="applicationId">
+      <div id="section1">
+        <h2>Section 1: Applicant Type & Intake Period</h2>
+
+        <label>Applicant Type*</label>
+        <div class="option-block">
+          <label><input type="radio" name="applicant_type" value="Researcher">
+            Researcher</label>
+          <label><input type="radio" name="applicant_type" value="Other">
+            Other</label>
+        </div>
+
+        <label>Intake Period (select all that apply):</label>
+        <div class="option-block">
+          <label><input type="checkbox" name="intake_period" value="Intake 1">
+            Intake 1 (March 1 – June 30)</label>
+          <label><input type="checkbox" name="intake_period" value="Intake 2">
+            Intake 2 (July 1 – October 31)</label>
+          <label><input type="checkbox" name="intake_period" value="Intake 3">
+            Intake 3 (Nov 1 – Feb 28)</label>
+        </div>
+        <button type="button" class="button" onclick="nextSection()">Next</button>
+      </div>
+
+      <div id="section2" style="display: none;">
+        <h2>Section 2: Applicant Information</h2>
+
+        <label>First Name* <input type="text" name="applicant_first_name" required></label>
+        <label>Last Name* <input type="text" name="applicant_last_name" required></label>
+        <label>Email* <input type="email" name="applicant_email" required></label>
+        <label>Name of University or Institution* <input type="text" name="institution_name" required></label>
+
+        <label>Country of University or Institution*</label>
+        <select name="institution_country" id="institutionCountry" required></select>
+
+        <label>Full Mailing Address* <textarea name="institution_address" rows="3" required></textarea></label>
+        <label>Province/Territory/State* <input type="text" name="province" required></label>
+        <label>Phone Number* <input type="tel" name="phone" required></label>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section3" style="display: none;">
+        <h2>Section 3: Primary Contact Information</h2>
+
+        <label>Is the primary contact the same as the applicant?*<br>
+          <input type="radio" name="same_as_applicant" value="Yes" required onclick="togglePrimaryContact(false)"> Yes
+          <input type="radio" name="same_as_applicant" value="No" onclick="togglePrimaryContact(true)"> No
+        </label>
+
+        <div id="primaryContactFields" style="display: none;">
+          <label>Primary Contact First Name* <input type="text" name="primary_first_name"></label>
+          <label>Primary Contact Last Name* <input type="text" name="primary_last_name"></label>
+          <label>Primary Contact Email* <input type="email" name="primary_email"></label>
+          <label>Primary Contact Phone Number* <input type="tel" name="primary_phone"></label>
+        </div>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section4" style="display: none;">
+        <h2>Section 4: Project Information</h2>
+
+        <label>Project Name* <input type="text" name="project_name" required></label>
+
+        <label>
+          Project Summary*<br>
+          <small>Briefly describe the project objectives, research questions,
+            methodology, and if you plan to use CHARS
+            labs, field equipment, or erect structures. (200 words
+            max)</small>
+          <textarea name="project_summary" rows="6" maxlength="2000" oninput="countWords(this, 'summaryCounter')"
+            required></textarea>
+          <div id="summaryCounter" style="font-size: 0.9em; color: #555;">0 /
+            200 words</div>
+        </label>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section5" style="display: none;">
+        <h2>Section 5: Team Composition</h2>
+
+        <label>How many different arrival and departure groups do you need to
+          plan for?*<br>
+          <select name="group_count" id="groupCount" onchange="generateGroupRows()" required>
+            <option value>-- Select a number --</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+        </label>
+
+        <h3>Arrival/Departure Information</h3>
+        <table id="groupsTable">
+          <thead>
+            <tr>
+              <th>Group #</th>
+              <th>Arrival Date</th>
+              <th>Departure Date</th>
+              <th># of Team Members</th>
+              <th>Needs Accommodation?</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="addGroupRow()">+ Add
+            Group</button>
+        </div>
+
+        <h3>Team Members</h3>
+        <table id="membersTable">
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Gender</th>
+              <th>Nationality</th>
+              <th>Group #</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="addMemberRow()">+ Add
+            Team Member</button>
+        </div>
+        <div style="margin-top: 1em;">
+          <div style="margin-top: 1em;">
+            <button type="button" class="button" onclick="previousSection()">Previous</button>
+            <button type="button" class="button" onclick="nextSection()">Next</button>
+          </div>
+        </div>
+      </div>
+      <div id="section6" style="display: none;">
+        <h2>Section 6: Permit Information</h2>
+
+        <label>Do you confirm that you are applying for a Scientific Research
+          License from the Nunavut Research
+          Institute?*<br>
+          <input type="radio" name="nri_license" value="Yes" required> Yes
+          <input type="radio" name="nri_license" value="No"> No
+        </label>
+
+        <label>Are permits required for your research other than the
+          Scientific Research License?*<br>
+          <input type="radio" name="other_permits" value="Yes" required> Yes
+          <input type="radio" name="other_permits" value="No"> No
+        </label>
+
+        <label>Have the permits been issued?*<br>
+          <input type="radio" name="permits_issued" value="Yes" required> Yes
+          <input type="radio" name="permits_issued" value="No"> No
+          <input type="radio" name="permits_issued" value="Not Applicable">
+          Not Applicable
+        </label>
+
+        <label>
+          <input type="checkbox" name="permit_acknowledgment" required>
+          I read the above statements and agree to submit the required
+          documentation to CHARS.
+        </label>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section7" style="display: none;">
+        <h2>Section 7: Relevance to Northerners and POLAR’s Priorities</h2>
+
+        <label>
+          How does your project contribute to POLAR’s priorities and address
+          issues relevant to Northerners, Indigenous
+          governments, and organizations?*<br>
+          <small>You may use point form or bullet points.</small>
+          <textarea name="northern_relevance" rows="6" required></textarea>
+        </label>
+
+        <label>
+          Based on the S&T Framework, select the goal that best applies to
+          your project:*<br>
+          <input type="radio" name="st_goal" value="Goal 1" required>
+          Goal 1: Improving knowledge of dynamic northern terrestrial,
+          freshwater and marine ecosystems in the context
+          of rapid change.<br>
+          <input type="radio" name="st_goal" value="Goal 2">
+          Goal 2: Increasing understanding of the connections between northern
+          community wellness and environmental
+          health.<br>
+          <input type="radio" name="st_goal" value="Goal 3">
+          Goal 3: Advancing sustainable energy, technology and infrastructure
+          solutions for the unique environmental,
+          social and cultural conditions in the North.
+        </label>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section8" style="display: none;">
+        <h2>Section 8: Funding</h2>
+
+        <label>Are you a recipient of POLAR funding?*<br>
+          <input type="radio" name="polar_funding" value="Yes" required onclick="toggleFundingField(true)"> Yes
+          <input type="radio" name="polar_funding" value="No" onclick="toggleFundingField(false)"> No
+        </label>
+
+        <div id="fundingField" style="display: none;">
+          <label>Identify the POLAR Funding Agreement Number* <input type="text" name="funding_agreement"></label>
+        </div>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section9" style="display: none;">
+        <h2>Section 9: Partnership with POLAR</h2>
+
+        <label>Does your project involve a partnership with POLAR staff?*<br>
+          <input type="radio" name="polar_partnership" value="Yes" required onclick="toggleStaffContact(true)"> Yes
+          <input type="radio" name="polar_partnership" value="No" onclick="toggleStaffContact(false)"> No
+        </label>
+
+        <div id="staffContactField" style="display: none;">
+          <label>Name of your primary POLAR staff contact* <input type="text" name="staff_contact_name"></label>
+        </div>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section10" style="display: none;">
+        <h2>Section 10: Community Engagement</h2>
+
+        <label>Will you engage the community of Cambridge Bay or the local
+          authorities?*<br>
+          <input type="radio" name="engage_community" value="Yes" required>
+          Yes
+          <input type="radio" name="engage_community" value="No"> No
+        </label>
+
+        <label>Will you share the research results with the community of
+          Cambridge Bay or local authorities?*<br>
+          <input type="radio" name="share_results" value="Yes" required> Yes
+          <input type="radio" name="share_results" value="No"> No
+        </label>
+
+        <label>
+          Briefly describe your engagement plan or explain why you are not
+          engaging the community.*<br>
+          <small>Maximum 150 words.</small>
+          <textarea name="engagement_plan" rows="5" maxlength="1500" oninput="countWords(this, 'engagementCounter')"
+            required></textarea>
+          <div id="engagementCounter" style="font-size: 0.9em; color: #555;">0
+            / 150 words</div>
+        </label>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section11" style="display: none;">
+        <h2>Section 11: Operational Support – Equipment</h2>
+
+        <label>Are you requesting the use of POLAR vehicles or machinery?*<br>
+          <input type="radio" name="request_equipment" value="Yes" required onclick="toggleEquipmentTable(true)"> Yes
+          <input type="radio" name="request_equipment" value="No" onclick="toggleEquipmentTable(false)"> No
+        </label>
+
+        <div id="equipmentTableSection" style="display: none;">
+          <h3>Requested Equipment</h3>
+          <table id="equipmentTable">
+            <thead>
+              <tr>
+                <th>Equipment Type</th>
+                <th>Quantity</th>
+                <th>Licensed?</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <button type="button" class="button" onclick="addEquipmentRow()">+
+            Add Equipment</button>
+        </div>
+
+        <h3>If POLAR were to provide training, would you participate? (select
+          all that apply)</h3>
+        <label><input type="checkbox" name="training[]" value="Snowmobile">
+          Snowmobile</label><br>
+        <label><input type="checkbox" name="training[]" value="ATV">
+          ATV</label><br>
+        <label><input type="checkbox" name="training[]" value="Boat">
+          Boat</label><br>
+        <label><input type="checkbox" name="training[]" value="Other">
+          Other</label>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section12" style="display: none;">
+        <h2>Section 12: Operational Support – Personnel</h2>
+
+        <label>Are you requesting access to one or more of POLAR's Field
+          Technicians?*<br>
+          <input type="radio" name="request_technicians" value="Yes" required onclick="togglePersonnelSupport(true)">
+          Yes
+          <input type="radio" name="request_technicians" value="No" onclick="togglePersonnelSupport(false)"> No
+        </label>
+
+        <div id="personnelSupportSection" style="display: none;">
+          <h3>Identify the types of support you require:</h3>
+          <label><input type="checkbox" name="personnel_support[]" value="Field support"> Field support (e.g., boat
+            operation, vehicle use, ATV, or snowmobile support)</label><br>
+          <label><input type="checkbox" name="personnel_support[]" value="Guiding"> Guiding</label><br>
+          <label><input type="checkbox" name="personnel_support[]" value="Wildlife monitoring"> Wildlife
+            monitoring</label><br>
+          <label><input type="checkbox" name="personnel_support[]" value="Aerial imaging"> Aerial drone imaging and
+            videography</label><br>
+          <label><input type="checkbox" name="personnel_support[]" value="Sampling"> Sampling assistance</label><br>
+          <label><input type="checkbox" name="personnel_support[]" value="Other"> Other:
+            <input type="text" name="personnel_other" placeholder="Specify other support" style="margin-top: 0.5em;">
+          </label>
+        </div>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section13" style="display: none;">
+        <h2>Section 13: Operational Support – Computing</h2>
+
+        <label>Are you requesting use of the computer studio?*<br>
+          <input type="radio" name="use_computer_studio" value="Yes" required>
+          Yes
+          <input type="radio" name="use_computer_studio" value="No"> No
+        </label>
+
+        <label>
+          Are you requesting use of a POLAR computer? If yes, briefly describe
+          your requirements:
+          <textarea name="computer_requirements" rows="4"
+            placeholder="Describe any computing or software needs here..."></textarea>
+        </label>
+
+        <label>Are you requesting to set up scientific equipment on POLAR’s
+          network?*<br>
+          <input type="radio" name="network_connection" value="Yes" required>
+          Yes
+          <input type="radio" name="network_connection" value="No"> No
+        </label>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section14" style="display: none;">
+        <h2>Section 14: Operational Support – Firearms</h2>
+
+        <label>Will you be bringing firearms or ammunition to CHARS?*<br>
+          <input type="radio" name="firearms" value="Yes" required> Yes
+          <input type="radio" name="firearms" value="No"> No
+        </label>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section15" style="display: none;">
+        <h2>Section 15: Operational Support – Expedited Goods (Shipping)</h2>
+
+        <label>Will you ship material to CHARS?*<br>
+          <input type="radio" name="ship_materials" value="Yes" required onclick="toggleShippingDetails(true)"> Yes
+          <input type="radio" name="ship_materials" value="No" onclick="toggleShippingDetails(false)"> No
+        </label>
+
+        <div id="shippingDetails" style="display: none;">
+
+          <label>Will you ship hazardous materials to CHARS?*<br>
+            <input type="radio" name="hazardous_materials" value="Yes" required> Yes
+            <input type="radio" name="hazardous_materials" value="No"> No
+          </label>
+
+          <label>
+            <input type="checkbox" name="hazardous_acknowledgment" required>
+            I understand that I am required to dispose of hazardous materials
+            I transport to CHARS. To comply with
+            Nunavut rules and regulations regarding hazardous waste, I may be
+            required to arrange shipping materials
+            back to my home institution or out of Cambridge Bay.
+          </label>
+
+          <label>Will you ship materials that require freezer or refrigeration
+            space?*<br>
+            <input type="radio" name="cold_storage" value="Yes" required> Yes
+            <input type="radio" name="cold_storage" value="No"> No
+          </label>
+
+          <label>Will you ship laboratory or other equipment?*<br>
+            <input type="radio" name="ship_equipment" value="Yes" required>
+            Yes
+            <input type="radio" name="ship_equipment" value="No"> No
+          </label>
+
+        </div>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section16" style="display: none;">
+        <h2>Section 16: Operational Support – Expedited Goods (Storage)</h2>
+
+        <label>If you have materials already stored at CHARS, under what name
+          are they stored?
+          <input type="text" name="storage_name">
+        </label>
+
+        <p>
+          <strong>Note:</strong> If your application is accepted, you will be
+          required to submit additional shipping and
+          storage details, including:
+        <ul>
+          <li>Shipping methods</li>
+          <li>Service provider</li>
+          <li>Number of containers</li>
+          <li>Anticipated arrival date</li>
+          <li>Contents of materials</li>
+          <li>List of hazardous materials</li>
+          <li>Laboratory equipment</li>
+          <li>Freezer/refrigerator volume required (in cm)</li>
+        </ul>
+        </p>
+
+        <label>
+          <input type="checkbox" name="storage_acknowledgment" required>
+          I understand I will be required to submit shipping and storage
+          information to CHARS.
+        </label>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section17" style="display: none;">
+        <h2>Section 17: Operational Support – Laboratory Space</h2>
+
+        <label>Are you requesting laboratory space?*<br>
+          <input type="radio" name="lab_space" value="Yes" required onclick="toggleLabDetails(true)"> Yes
+          <input type="radio" name="lab_space" value="No" onclick="toggleLabDetails(false)"> No
+        </label>
+
+        <div id="labDetails" style="display: none;">
+          <label>Do you require water or sinks?*<br>
+            <input type="radio" name="lab_water" value="Yes" required> Yes
+            <input type="radio" name="lab_water" value="No"> No
+          </label>
+
+          <label>Do you require fume hoods?*<br>
+            <input type="radio" name="lab_fume_hoods" value="Yes" required>
+            Yes
+            <input type="radio" name="lab_fume_hoods" value="No"> No
+          </label>
+
+          <label>Do you wish to book a specific lab?*<br>
+            <input type="radio" name="specific_lab" value="Yes" required onclick="toggleLabSelection(true)"> Yes
+            <input type="radio" name="specific_lab" value="No" onclick="toggleLabSelection(false)"> No
+          </label>
+
+          <div id="labSelection" style="display: none;">
+            <p><strong>Which laboratories do you wish to book?</strong></p>
+            <label><input type="checkbox" name="labs[]" value="Clean Room">
+              Clean Room</label><br>
+            <label><input type="checkbox" name="labs[]" value="Cold Lab"> Cold
+              Lab</label><br>
+            <label><input type="checkbox" name="labs[]" value="Digital Imaging"> Digital Imaging</label><br>
+            <label><input type="checkbox" name="labs[]" value="General Analytical Lab"> General Analytical
+              Lab</label><br>
+            <label><input type="checkbox" name="labs[]" value="Genomics Lab">
+              Genomics Lab</label><br>
+            <label><input type="checkbox" name="labs[]" value="Growth Chamber Lab"> Growth Chamber Lab</label><br>
+            <label><input type="checkbox" name="labs[]" value="Multi-use Lab">
+              Multi-use Lab</label><br>
+            <label><input type="checkbox" name="labs[]" value="Necropsy Lab">
+              Necropsy Lab</label><br>
+            <label><input type="checkbox" name="labs[]" value="Reference Collection Lab"> Reference Collection
+              Lab</label><br>
+            <label><input type="checkbox" name="labs[]" value="Teaching Lab">
+              Teaching Lab</label><br>
+            <label><input type="checkbox" name="labs[]" value="Wet Lab Anteroom"> Wet Lab Anteroom</label>
+          </div>
+
+          <label>
+            <input type="checkbox" name="lab_certification" required>
+            I understand that upon acceptance of my application, I will be
+            required to provide proof of certification in
+            fire extinguishing and WHMIS. See <a href="https://whmis.org/" target="_blank">whmis.org</a>.
+          </label>
+        </div>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section18" style="display: none;">
+        <h2>Section 18: Polar Continental Shelf Program (PCSP) Equipment</h2>
+
+        <label>Do you anticipate bringing equipment provided by the PCSP?*<br>
+          <input type="radio" name="pcsp_equipment" value="Yes" required> Yes
+          <input type="radio" name="pcsp_equipment" value="No"> No
+        </label>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="button" class="button" onclick="nextSection()">Next</button>
+        </div>
+      </div>
+      <div id="section19" style="display: none;">
+        <h2>Section 19: Submit Application</h2>
+
+        <p><strong>Before submitting your application, ensure the
+            following:</strong></p>
+        <ul>
+          <li>All questions are answered.</li>
+          <li>All team member and permit information is accurate.</li>
+        </ul>
+
+        <p>If your application is successful, you may be asked to provide:</p>
+        <ul>
+          <li>Names and contact info of all team members</li>
+          <li>Signed waivers and Terms of Conditions of Occupancy</li>
+          <li>Details on space and equipment needs</li>
+          <li>Proof of training and vehicle licenses</li>
+        </ul>
+
+        <p>Details on CHARS public spaces: <a
+            href="https://www.canada.ca/en/polar-knowledge/charsusingcampus.html#public-areas" target="_blank">CHARS
+            Using the Campus</a></p>
+        <p>Information disclosure is subject to the <a
+            href="https://www.canada.ca/en/treasury-board-secretariat/services/access-information-privacy/access-information/information-about-programs-information-holdings.html"
+            target="_blank">Access to Information Act</a> and <strong>Privacy
+            Act</strong>.</p>
+
+        <label>
+          <input type="checkbox" name="privacy_agreement" required>
+          I understand the above statement, confirm that the information in
+          this document is accurate, and agree to
+          POLAR requirements.
+        </label>
+
+        <div style="margin-top: 1em;">
+          <button type="button" class="button" onclick="previousSection()">Previous</button>
+          <button type="submit" class="button">Submit Application</button>
+        </div>
+
+      </div>
+    </form>
+    <div id="thankYouMessage" style="display:none; text-align: center;">
+      <h2>Thank you for your application!</h2>
+      <p>Your responses have been submitted successfully.</p>
+      <p>You may now close this tab or download a copy of your submission below.</p>
+      <button type="button" class="button" onclick="downloadSubmission()">Download My Responses</button>
+    </div>
+
+    <div id="summaryContent" style="display: none;">
+      <h2>Application Summary</h2>
+
+      <h3>Section 1: Applicant Type & Intake Period</h3>
+      <p><strong>Applicant Type:</strong> <span data-summary="applicant_type"></span></p>
+      <p><strong>Intake Period(s):</strong> <span data-summary="intake_period"></span></p>
+
+      <h3>Section 2: Applicant Information</h3>
+      <p><strong>First Name:</strong> <span data-summary="applicant_first_name"></span></p>
+      <p><strong>Last Name:</strong> <span data-summary="applicant_last_name"></span></p>
+      <p><strong>Email:</strong> <span data-summary="applicant_email"></span></p>
+      <p><strong>Institution Name:</strong> <span data-summary="institution_name"></span></p>
+      <p><strong>Country:</strong> <span data-summary="institution_country"></span></p>
+      <p><strong>Address:</strong> <span data-summary="institution_address"></span></p>
+      <p><strong>Province/State:</strong> <span data-summary="province"></span></p>
+      <p><strong>Phone:</strong> <span data-summary="phone"></span></p>
+
+      <h3>Section 3: Primary Contact Information</h3>
+      <p><strong>Same as Applicant:</strong> <span data-summary="same_as_applicant"></span></p>
+      <p><strong>Primary First Name:</strong> <span data-summary="primary_first_name"></span></p>
+      <p><strong>Primary Last Name:</strong> <span data-summary="primary_last_name"></span></p>
+      <p><strong>Primary Email:</strong> <span data-summary="primary_email"></span></p>
+      <p><strong>Primary Phone:</strong> <span data-summary="primary_phone"></span></p>
+
+      <h3>Section 4: Project Information</h3>
+      <p><strong>Project Name:</strong> <span data-summary="project_name"></span></p>
+      <p><strong>Project Summary:</strong><br><span data-summary="project_summary"></span></p>
+
+      <h3>Section 5: Team Composition</h3>
+      <p><strong>Group Count:</strong> <span data-summary="group_count"></span></p>
+      <div>
+        <strong>Arrival/Departure Groups:</strong>
+        <ul id="summary-arrival-groups"></ul>
+      </div>
+      <div>
+        <strong>Team Members:</strong>
+        <ul id="summary-team-members"></ul>
+      </div>
+
+      <h3>Section 6: Permit Information</h3>
+      <p><strong>Applying for Scientific License:</strong> <span data-summary="nri_license"></span></p>
+      <p><strong>Other Permits Required:</strong> <span data-summary="other_permits"></span></p>
+      <p><strong>Permits Issued:</strong> <span data-summary="permits_issued"></span></p>
+      <p><strong>Acknowledgment:</strong> <span data-summary="permit_acknowledgment"></span></p>
+
+      <h3>Section 7: Relevance to Northerners and POLAR’s Priorities</h3>
+      <p><strong>Northern Relevance:</strong><br><span data-summary="northern_relevance"></span></p>
+      <p><strong>S&T Goal:</strong> <span data-summary="st_goal"></span></p>
+
+      <h3>Section 8: Funding</h3>
+      <p><strong>POLAR Funding Recipient:</strong> <span data-summary="polar_funding"></span></p>
+      <p><strong>Funding Agreement Number:</strong> <span data-summary="funding_agreement"></span></p>
+
+      <h3>Section 9: Partnership with POLAR</h3>
+      <p><strong>POLAR Staff Partnership:</strong> <span data-summary="polar_partnership"></span></p>
+      <p><strong>Staff Contact Name:</strong> <span data-summary="staff_contact_name"></span></p>
+
+      <h3>Section 10: Community Engagement</h3>
+      <p><strong>Engaging Community:</strong> <span data-summary="engage_community"></span></p>
+      <p><strong>Sharing Results:</strong> <span data-summary="share_results"></span></p>
+      <p><strong>Engagement Plan:</strong><br><span data-summary="engagement_plan"></span></p>
+
+      <h3>Section 11: Operational Support – Equipment</h3>
+      <p><strong>Requesting POLAR Equipment:</strong> <span data-summary="request_equipment"></span></p>
+      <div>
+        <strong>Equipment Requested:</strong>
+        <ul id="summary-equipment"></ul>
+      </div>
+      <p><strong>Training Selected:</strong> <span data-summary="training[]"></span></p>
+
+      <h3>Section 12: Operational Support – Personnel</h3>
+      <p><strong>Request Field Technicians:</strong> <span data-summary="request_technicians"></span></p>
+      <p><strong>Personnel Support Required:</strong> <span data-summary="personnel_support[]"></span></p>
+      <p><strong>Other Support Specified:</strong> <span data-summary="personnel_other"></span></p>
+
+      <h3>Section 13: Operational Support – Computing</h3>
+      <p><strong>Use Computer Studio:</strong> <span data-summary="use_computer_studio"></span></p>
+      <p><strong>Computer Requirements:</strong> <span data-summary="computer_requirements"></span></p>
+      <p><strong>Request Network Connection:</strong> <span data-summary="network_connection"></span></p>
+
+      <h3>Section 14: Operational Support – Firearms</h3>
+      <p><strong>Bringing Firearms:</strong> <span data-summary="firearms"></span></p>
+
+      <h3>Section 15: Expedited Goods – Shipping</h3>
+      <p><strong>Shipping Materials to CHARS:</strong> <span data-summary="ship_materials"></span></p>
+      <p><strong>Hazardous Materials:</strong> <span data-summary="hazardous_materials"></span></p>
+      <p><strong>Hazardous Acknowledgment:</strong> <span data-summary="hazardous_acknowledgment"></span></p>
+      <p><strong>Cold Storage Required:</strong> <span data-summary="cold_storage"></span></p>
+      <p><strong>Shipping Equipment:</strong> <span data-summary="ship_equipment"></span></p>
+
+      <h3>Section 16: Expedited Goods – Storage</h3>
+      <p><strong>Stored Material Name:</strong> <span data-summary="storage_name"></span></p>
+      <p><strong>Storage Acknowledgment:</strong> <span data-summary="storage_acknowledgment"></span></p>
+
+      <h3>Section 17: Laboratory Space</h3>
+      <p><strong>Request Lab Space:</strong> <span data-summary="lab_space"></span></p>
+      <p><strong>Require Water/Sinks:</strong> <span data-summary="lab_water"></span></p>
+      <p><strong>Require Fume Hoods:</strong> <span data-summary="lab_fume_hoods"></span></p>
+      <p><strong>Book Specific Lab:</strong> <span data-summary="specific_lab"></span></p>
+      <p><strong>Selected Labs:</strong> <span data-summary="labs[]"></span></p>
+      <p><strong>Lab Certification Acknowledged:</strong> <span data-summary="lab_certification"></span></p>
+
+      <h3>Section 18: PCSP Equipment</h3>
+      <p><strong>Bringing PCSP Equipment:</strong> <span data-summary="pcsp_equipment"></span></p>
+
+      <h3>Section 19: Final Submission</h3>
+      <p><strong>Privacy Acknowledgment:</strong> <span data-summary="privacy_agreement"></span></p>
+
+    </div>
+    <script>
+      const countryOptions = `
+    <option value="">-- Select --</option>
+    <option value="Canada">Canada</option>
+    <option value="United States">United States</option>
+    <option value="United Kingdom">United Kingdom</option>
+    <option value="Australia">Australia</option>
+    <option value="France">France</option>
+    <option value="Korea, Republic of">Korea, Republic of</option>
+    <option value="Afghanistan">Afghanistan</option>
+    <option value="Åland Islands">Åland Islands</option>
+    <option value="Albania">Albania</option>
+    <option value="Algeria">Algeria</option>
+    <option value="American Samoa">American Samoa</option>
+    <option value="Andorra">Andorra</option>
+    <option value="Angola">Angola</option>
+    <option value="Anguilla">Anguilla</option>
+    <option value="Antarctica">Antarctica</option>
+    <option value="Antigua and Barbuda">Antigua and Barbuda</option>
+    <option value="Argentina">Argentina</option>
+    <option value="Armenia">Armenia</option>
+    <option value="Aruba">Aruba</option>
+    <option value="Austria">Austria</option>
+    <option value="Azerbaijan">Azerbaijan</option>
+    <option value="Bahamas">Bahamas</option>
+    <option value="Bahrain">Bahrain</option>
+    <option value="Bangladesh">Bangladesh</option>
+    <option value="Barbados">Barbados</option>
+    <option value="Belarus">Belarus</option>
+    <option value="Belgium">Belgium</option>
+    <option value="Belize">Belize</option>
+    <option value="Benin">Benin</option>
+    <option value="Bermuda">Bermuda</option>
+    <option value="Bhutan">Bhutan</option>
+    <option value="Bolivia">Bolivia</option>
+    <option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option>
+    <option value="Botswana">Botswana</option>
+    <option value="Bouvet Island">Bouvet Island</option>
+    <option value="Brazil">Brazil</option>
+    <option value="British Indian Ocean Territory">British Indian Ocean Territory</option>
+    <option value="Brunei Darussalam">Brunei Darussalam</option>
+    <option value="Bulgaria">Bulgaria</option>
+    <option value="Burkina Faso">Burkina Faso</option>
+    <option value="Burundi">Burundi</option>
+    <option value="Cambodia">Cambodia</option>
+    <option value="Cameroon">Cameroon</option>
+    <option value="Cape Verde">Cape Verde</option>
+    <option value="Cayman Islands">Cayman Islands</option>
+    <option value="Central African Republic">Central African Republic</option>
+    <option value="Chad">Chad</option>
+    <option value="Chile">Chile</option>
+    <option value="China">China</option>
+    <option value="Christmas Island">Christmas Island</option>
+    <option value="Cocos (Keeling) Islands">Cocos (Keeling) Islands</option>
+    <option value="Colombia">Colombia</option>
+    <option value="Comoros">Comoros</option>
+    <option value="Congo">Congo</option>
+    <option value="Congo, The Democratic Republic of The">Congo, The Democratic Republic of The</option>
+    <option value="Cook Islands">Cook Islands</option>
+    <option value="Costa Rica">Costa Rica</option>
+    <option value="Cote D'ivoire">Cote D'ivoire</option>
+    <option value="Croatia">Croatia</option>
+    <option value="Cuba">Cuba</option>
+    <option value="Cyprus">Cyprus</option>
+    <option value="Czech Republic">Czech Republic</option>
+    <option value="Denmark">Denmark</option>
+    <option value="Djibouti">Djibouti</option>
+    <option value="Dominica">Dominica</option>
+    <option value="Dominican Republic">Dominican Republic</option>
+    <option value="Ecuador">Ecuador</option>
+    <option value="Egypt">Egypt</option>
+    <option value="El Salvador">El Salvador</option>
+    <option value="Equatorial Guinea">Equatorial Guinea</option>
+    <option value="Eritrea">Eritrea</option>
+    <option value="Estonia">Estonia</option>
+    <option value="Ethiopia">Ethiopia</option>
+    <option value="Falkland Islands (Malvinas)">Falkland Islands (Malvinas)</option>
+    <option value="Faroe Islands">Faroe Islands</option>
+    <option value="Fiji">Fiji</option>
+    <option value="Finland">Finland</option>
+    <option value="France">France</option>
+    <option value="French Guiana">French Guiana</option>
+    <option value="French Polynesia">French Polynesia</option>
+    <option value="French Southern Territories">French Southern Territories</option>
+    <option value="Gabon">Gabon</option>
+    <option value="Gambia">Gambia</option>
+    <option value="Georgia">Georgia</option>
+    <option value="Germany">Germany</option>
+    <option value="Ghana">Ghana</option>
+    <option value="Gibraltar">Gibraltar</option>
+    <option value="Greece">Greece</option>
+    <option value="Greenland">Greenland</option>
+    <option value="Grenada">Grenada</option>
+    <option value="Guadeloupe">Guadeloupe</option>
+    <option value="Guam">Guam</option>
+    <option value="Guatemala">Guatemala</option>
+    <option value="Guernsey">Guernsey</option>
+    <option value="Guinea">Guinea</option>
+    <option value="Guinea-bissau">Guinea-bissau</option>
+    <option value="Guyana">Guyana</option>
+    <option value="Haiti">Haiti</option>
+    <option value="Heard Island and Mcdonald Islands">Heard Island and Mcdonald Islands</option>
+    <option value="Holy See (Vatican City State)">Holy See (Vatican City State)</option>
+    <option value="Honduras">Honduras</option>
+    <option value="Hong Kong">Hong Kong</option>
+    <option value="Hungary">Hungary</option>
+    <option value="Iceland">Iceland</option>
+    <option value="India">India</option>
+    <option value="Indonesia">Indonesia</option>
+    <option value="Iran, Islamic Republic of">Iran, Islamic Republic of</option>
+    <option value="Iraq">Iraq</option>
+    <option value="Ireland">Ireland</option>
+    <option value="Isle of Man">Isle of Man</option>
+    <option value="Israel">Israel</option>
+    <option value="Italy">Italy</option>
+    <option value="Jamaica">Jamaica</option>
+    <option value="Japan">Japan</option>
+    <option value="Jersey">Jersey</option>
+    <option value="Jordan">Jordan</option>
+    <option value="Kazakhstan">Kazakhstan</option>
+    <option value="Kenya">Kenya</option>
+    <option value="Kiribati">Kiribati</option>
+    <option value="Korea, Democratic People's Republic of">Korea, Democratic People's Republic of</option>
+    <option value="Kuwait">Kuwait</option>
+    <option value="Kyrgyzstan">Kyrgyzstan</option>
+    <option value="Lao People's Democratic Republic">Lao People's Democratic Republic</option>
+    <option value="Latvia">Latvia</option>
+    <option value="Lebanon">Lebanon</option>
+    <option value="Lesotho">Lesotho</option>
+    <option value="Liberia">Liberia</option>
+    <option value="Libyan Arab Jamahiriya">Libyan Arab Jamahiriya</option>
+    <option value="Liechtenstein">Liechtenstein</option>
+    <option value="Lithuania">Lithuania</option>
+    <option value="Luxembourg">Luxembourg</option>
+    <option value="Macao">Macao</option>
+    <option value="Macedonia, The Former Yugoslav Republic of">Macedonia, The Former Yugoslav Republic of</option>
+    <option value="Madagascar">Madagascar</option>
+    <option value="Malawi">Malawi</option>
+    <option value="Malaysia">Malaysia</option>
+    <option value="Maldives">Maldives</option>
+    <option value="Mali">Mali</option>
+    <option value="Malta">Malta</option>
+    <option value="Marshall Islands">Marshall Islands</option>
+    <option value="Martinique">Martinique</option>
+    <option value="Mauritania">Mauritania</option>
+    <option value="Mauritius">Mauritius</option>
+    <option value="Mayotte">Mayotte</option>
+    <option value="Mexico">Mexico</option>
+    <option value="Micronesia, Federated States of">Micronesia, Federated States of</option>
+    <option value="Moldova, Republic of">Moldova, Republic of</option>
+    <option value="Monaco">Monaco</option>
+    <option value="Mongolia">Mongolia</option>
+    <option value="Montenegro">Montenegro</option>
+    <option value="Montserrat">Montserrat</option>
+    <option value="Morocco">Morocco</option>
+    <option value="Mozambique">Mozambique</option>
+    <option value="Myanmar">Myanmar</option>
+    <option value="Namibia">Namibia</option>
+    <option value="Nauru">Nauru</option>
+    <option value="Nepal">Nepal</option>
+    <option value="Netherlands">Netherlands</option>
+    <option value="Netherlands Antilles">Netherlands Antilles</option>
+    <option value="New Caledonia">New Caledonia</option>
+    <option value="New Zealand">New Zealand</option>
+    <option value="Nicaragua">Nicaragua</option>
+    <option value="Niger">Niger</option>
+    <option value="Nigeria">Nigeria</option>
+    <option value="Niue">Niue</option>
+    <option value="Norfolk Island">Norfolk Island</option>
+    <option value="Northern Mariana Islands">Northern Mariana Islands</option>
+    <option value="Norway">Norway</option>
+    <option value="Oman">Oman</option>
+    <option value="Pakistan">Pakistan</option>
+    <option value="Palau">Palau</option>
+    <option value="Palestinian Territory, Occupied">Palestinian Territory, Occupied</option>
+    <option value="Panama">Panama</option>
+    <option value="Papua New Guinea">Papua New Guinea</option>
+    <option value="Paraguay">Paraguay</option>
+    <option value="Peru">Peru</option>
+    <option value="Philippines">Philippines</option>
+    <option value="Pitcairn">Pitcairn</option>
+    <option value="Poland">Poland</option>
+    <option value="Portugal">Portugal</option>
+    <option value="Puerto Rico">Puerto Rico</option>
+    <option value="Qatar">Qatar</option>
+    <option value="Reunion">Reunion</option>
+    <option value="Romania">Romania</option>
+    <option value="Russian Federation">Russian Federation</option>
+    <option value="Rwanda">Rwanda</option>
+    <option value="Saint Helena">Saint Helena</option>
+    <option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option>
+    <option value="Saint Lucia">Saint Lucia</option>
+    <option value="Saint Pierre and Miquelon">Saint Pierre and Miquelon</option>
+    <option value="Saint Vincent and The Grenadines">Saint Vincent and The Grenadines</option>
+    <option value="Samoa">Samoa</option>
+    <option value="San Marino">San Marino</option>
+    <option value="Sao Tome and Principe">Sao Tome and Principe</option>
+    <option value="Saudi Arabia">Saudi Arabia</option>
+    <option value="Senegal">Senegal</option>
+    <option value="Serbia">Serbia</option>
+    <option value="Seychelles">Seychelles</option>
+    <option value="Sierra Leone">Sierra Leone</option>
+    <option value="Singapore">Singapore</option>
+    <option value="Slovakia">Slovakia</option>
+    <option value="Slovenia">Slovenia</option>
+    <option value="Solomon Islands">Solomon Islands</option>
+    <option value="Somalia">Somalia</option>
+    <option value="South Africa">South Africa</option>
+    <option value="Spain">Spain</option>
+    <option value="Sri Lanka">Sri Lanka</option>
+    <option value="Sudan">Sudan</option>
+    <option value="Suriname">Suriname</option>
+    <option value="Sweden">Sweden</option>
+    <option value="Switzerland">Switzerland</option>
+    <option value="Syrian Arab Republic">Syrian Arab Republic</option>
+    <option value="Taiwan">Taiwan</option>
+    <option value="Tajikistan">Tajikistan</option>
+    <option value="Tanzania, United Republic of">Tanzania, United Republic of</option>
+    <option value="Thailand">Thailand</option>
+    <option value="Togo">Togo</option>
+    <option value="Tonga">Tonga</option>
+    <option value="Trinidad and Tobago">Trinidad and Tobago</option>
+    <option value="Tunisia">Tunisia</option>
+    <option value="Turkey">Turkey</option>
+    <option value="Uganda">Uganda</option>
+    <option value="Ukraine">Ukraine</option>
+    <option value="United Arab Emirates">United Arab Emirates</option>
+    <option value="Uruguay">Uruguay</option>
+    <option value="Uzbekistan">Uzbekistan</option>
+    <option value="Vanuatu">Vanuatu</option>
+    <option value="Venezuela">Venezuela</option>
+    <option value="Vietnam">Vietnam</option>
+    <option value="Zambia">Zambia</option>
+    <option value="Zimbabwe">Zimbabwe</option>
+  `;
+
+      const sections = [
+        "section1", "section2", "section3", "section4", "section5",
+        "section6", "section7", "section8", "section9", "section10",
+        "section11", "section12", "section13", "section14", "section15",
+        "section16", "section17", "section18", "section19"
+      ];
+      let currentSection = 0;
+
+      function showSection(index) {
+        sections.forEach((id, i) => {
+          document.getElementById(id).style.display = i === index ? "block" : "none";
+          setSectionValidation(id, i === index);  // 👈 Enable validation only for the visible section
+        });
+        document.getElementById("progressBar").style.width = ((index + 1) / sections.length * 100) + "%";
+      }
+
+
+      function nextSection() {
+        if (currentSection < sections.length - 1) {
+          currentSection++;
+          showSection(currentSection);
+          saveProgress();
+        }
+      }
+
+      function previousSection() {
+        if (currentSection > 0) {
+          currentSection--;
+          showSection(currentSection);
+          saveProgress();
+        }
+      }
+
+
+      function saveProgress() {
+        const formData = new FormData(document.getElementById("intakeForm"));
+        const values = {};
+        for (let [key, value] of formData.entries()) {
+          if (!values[key]) {
+            values[key] = value;
+          } else if (Array.isArray(values[key])) {
+            values[key].push(value);
+          } else {
+            values[key] = [values[key], value];
+          }
+        }
+        localStorage.setItem("researchIntakeDraft", JSON.stringify(values));
+        localStorage.setItem("currentSectionIndex", currentSection.toString());
+      }
+
+      function loadProgress() {
+        const saved = localStorage.getItem("researchIntakeDraft");
+        const sectionIndex = parseInt(localStorage.getItem("currentSectionIndex"), 10);
+        if (saved) {
+          const values = JSON.parse(saved);
+          for (let key in values) {
+            const field = document.getElementsByName(key);
+            if (field.length > 1 && Array.isArray(values[key])) {
+              field.forEach((el, i) => {
+                if (values[key][i]) el.value = values[key][i];
+              });
+            } else if (field[0]) {
+              field[0].value = values[key];
+            }
+          }
+        }
+        if (!isNaN(sectionIndex)) {
+          currentSection = sectionIndex;
+        }
+        showSection(currentSection);
+      }
+
+      function countWords(textarea, counterId) {
+        const text = textarea.value.trim();
+        const wordCount = text ? text.split(/\\s+/).length : 0;
+        const limit = parseInt(counterId.includes("summary") ? 200 : 150, 10);
+        const counter = document.getElementById(counterId);
+        counter.textContent = `${wordCount} / ${limit} words`;
+        textarea.setCustomValidity(wordCount > limit ? `Please limit to ${limit} words.` : "");
+      }
+
+      // Toggle logic functions
+      function togglePrimaryContact(show) {
+        document.getElementById("primaryContactFields").style.display = show ? "block" : "none";
+      }
+
+      function toggleFundingField(show) {
+        document.getElementById("fundingField").style.display = show ? "block" : "none";
+      }
+
+      function toggleStaffContact(show) {
+        document.getElementById("staffContactField").style.display = show ? "block" : "none";
+      }
+
+      function toggleShippingDetails(show) {
+        document.getElementById("shippingDetails").style.display = show ? "block" : "none";
+      }
+
+      function toggleLabDetails(show) {
+        document.getElementById("labDetails").style.display = show ? "block" : "none";
+      }
+
+      function toggleLabSelection(show) {
+        document.getElementById("labSelection").style.display = show ? "block" : "none";
+      }
+
+      function toggleEquipmentTable(show) {
+        document.getElementById("equipmentTableSection").style.display = show ? "block" : "none";
+      }
+
+      function togglePersonnelSupport(show) {
+        document.getElementById("personnelSupportSection").style.display = show ? "block" : "none";
+      }
+
+      function addMemberRow() {
+        const table = document.getElementById("membersTable").querySelector("tbody");
+        const row = document.createElement("tr");
+        row.innerHTML = `
+    <td><input type="text" name="member_first[]" required></td>
+    <td><input type="text" name="member_last[]" required></td>
+    <td>
+      <select name="member_gender[]" required>
+        <option value="">-- Select --</option>
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+    </td>
+    <td>
+      <select name="member_nationality[]" required>${countryOptions}</select>
+    </td>
+    <td>
+      <select name="member_group[]" required>
+        <option value="">--</option>
+       ${[...Array(9)].map((_, i) => `<option value="${i + 1}">Group ${i + 1}</option>`).join("")}
+      </select>
+    </td>
+  `;
+        table.appendChild(row);
+      }
+
+      function addEquipmentRow() {
+        const tbody = document.getElementById("equipmentTable").querySelector("tbody");
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>
+              <select name="equipment_type[]" required>
+                <option value="">-- Select --</option>
+                <option>16' Boat</option>
+                <option>18' Boat</option>
+                <option>ATVs</option>
+                <option>Canoe</option>
+                <option>Covered Trailers for ATV</option>
+                <option>Electric Fences</option>
+                <option>Flatbed Trailers</option>
+                <option>Generators</option>
+                <option>GPS receivers</option>
+                <option>Ice Auger</option>
+                <option>Inflatable Boat</option>
+                <option>Satellite Communicator</option>
+                <option>Satellite Phone</option>
+                <option>Snowmobile</option>
+                <option>Soil Auger</option>
+                <option>Toboggan</option>
+                <option>Camping Supplies</option>
+                <option>Helmets</option>
+                <option>Scuba Tank</option>
+              </select>
+            </td>
+            <td><input type="number" name="equipment_quantity[]" min="1" required></td>
+            <td>
+              <select name="equipment_licensed[]" required>
+                <option value="">--</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Not Applicable">Not Applicable</option>
+              </select>
+            </td>
+          `;
+        tbody.appendChild(row);
+      }
+
+      function generateGroupRows() {
+        const count = parseInt(document.getElementById("groupCount").value, 10);
+        const tbody = document.getElementById("groupsTable").querySelector("tbody");
+        tbody.innerHTML = ""; // Clear any existing rows
+        for (let i = 1; i <= count; i++) {
+          addGroupRow(i);
+        }
+      }
+
+      function addGroupRow(index = null) {
+        const tbody = document.getElementById("groupsTable").querySelector("tbody");
+        const currentCount = tbody.children.length + 1;
+        const groupNum = index || currentCount;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>Group ${groupNum}</td>
+            <td><input type="date" name="arrival_${groupNum}" required></td>
+            <td><input type="date" name="departure_${groupNum}" required></td>
+            <td><input type="number" name="members_${groupNum}" min="1" required></td>
+            <td>
+              <select name="accommodation_${groupNum}" required>
+                <option value="">--</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                </select>
+                </td>
+                `;
+        tbody.appendChild(row);
+      }
+
+      window.onload = function () {
+        loadProgress();
+        // Generate or retrieve a unique Application ID
+        let appId = localStorage.getItem("applicationId");
+        if (!appId) {
+          appId = crypto.randomUUID(); // Modern and supported in most browsers
+          localStorage.setItem("applicationId", appId);
+        }
+        document.getElementById("applicationId").value = appId;
+
+        document.getElementById("institutionCountry").innerHTML = countryOptions;
+        // ✅ Moved inside onload to ensure the form is present
+        document.getElementById("intakeForm").addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          // Package all form data
+          const form = e.target;
+          const formData = new FormData(form);
+          const data = {};
+          // Build a clean object of form values
+          for (let [key, value] of formData.entries()) {
+            if (data[key]) {
+              // Handle multiple entries (checkboxes, dynamic rows)
+              if (!Array.isArray(data[key])) {
+                data[key] = [data[key]];
+              }
+              data[key].push(value);
+            } else {
+              data[key] = value;
+            }
+          }
+
+          const groupCount = parseInt(data.group_count || "0");
+          data.arrival_groups = [];
+
+          for (let i = 1; i <= groupCount; i++) {
+            const group = {
+              application_id: appId,
+              id: i,
+              arrival: data[`arrival_${i}`],
+              departure: data[`departure_${i}`],
+              members: data[`members_${i}`],
+              accommodation: data[`accommodation_${i}`]
+            };
+            data.arrival_groups.push(group);
+          }
+
+          //Optional cleanup
+          for (let i = 1; i <= groupCount; i++) {
+            delete data[`arrival_${i}`];
+            delete data[`departure_${i}`];
+            delete data[`members_${i}`];
+            delete data[`accommodation_${i}`];
+          }
+
+
+          const teamMembers = [];
+          const firstNames = data["member_first[]"] || [];
+          const lastNames = data["member_last[]"] || [];
+          const genders = data["member_gender[]"] || [];
+          const nationalities = data["member_nationality[]"] || [];
+
+          const count = Math.max(firstNames.length, lastNames.length, genders.length, nationalities.length);
+          for (let i = 0; i < count; i++) {
+            teamMembers.push({
+              application_id: appId,
+              first_name: Array.isArray(firstNames) ? firstNames[i] : firstNames,
+              last_name: Array.isArray(lastNames) ? lastNames[i] : lastNames,
+              gender: Array.isArray(genders) ? genders[i] : genders,
+              nationality: Array.isArray(nationalities) ? nationalities[i] : nationalities,
+            });
+          }
+          data.team_members = teamMembers;
+
+          // Optional: Remove the original arrays if you want a cleaner final object
+          delete data["member_first[]"];
+          delete data["member_last[]"];
+          delete data["member_gender[]"];
+          delete data["member_nationality[]"];
+
+          const equipment = [];
+          const types = data["equipment_type[]"] || [];
+          const quantities = data["equipment_quantity[]"] || [];
+          const licensed = data["equipment_licensed[]"] || [];
+
+          const equipmentCount = Math.max(types.length, quantities.length, licensed.length);
+          for (let i = 0; i < equipmentCount; i++) {
+            equipment.push({
+              application_id: appId,
+              type: Array.isArray(types) ? types[i] : types,
+              quantity: Array.isArray(quantities) ? quantities[i] : quantities,
+              licensed: Array.isArray(licensed) ? licensed[i] : licensed
+            });
+          }
+          data.equipment = equipment;
+
+          // Optional cleanup
+          delete data["equipment_type[]"];
+          delete data["equipment_quantity[]"];
+          delete data["equipment_licensed[]"];
+
+
+
+
+          // (Optional) Log it for now
+          console.log("📦 Packaged Data:", data);
+
+          // Save it as JSON for Power Automate (to be sent later)
+          const packagedJSON = JSON.stringify(data);
+
+          // ✅ For testing, store in localStorage temporarily
+          localStorage.setItem("researchIntakeSubmission", packagedJSON);
+
+          // Hide the form and show thank-you message
+          form.style.display = "none";
+          document.getElementById("thankYouMessage").style.display = "block";
+
+          // Clear progress from localStorage
+          localStorage.removeItem("researchIntakeDraft");
+          localStorage.removeItem("currentSectionIndex");
+
+          // 📤 Optional: sendToPowerAutomate(packagedJSON);
+        });
+
+      };
+
+      function setSectionValidation(sectionId, enable) {
+        const inputs = document.querySelectorAll(`#${sectionId} input, #${sectionId} select, #${sectionId} textarea`);
+        inputs.forEach(input => {
+          if (!enable) {
+            input.setAttribute("data-required", input.required);
+            input.required = false;
+          } else if (input.hasAttribute("data-required")) {
+            input.required = input.getAttribute("data-required") === "true";
+            input.removeAttribute("data-required");
+          }
+        });
+      }
+      function fillSummary(data) {
+        // Helper function to fill summary fields by data-summary attribute
+        const spans = document.querySelectorAll("#summaryContent [data-summary]");
+        spans.forEach(span => {
+          if (!span) return;
+          const key = span.getAttribute("data-summary");
+          let value = data[key];
+
+          // Handle arrays (e.g., checkboxes)
+          if (Array.isArray(value)) {
+            value = value.join(", ");
+          }
+
+          // Fallback for undefined or null
+          span.textContent = value !== undefined && value !== null ? value : "-";
+        });
+
+        // Handle special structures (team members, equipment, arrival groups)
+        if (data.team_members && Array.isArray(data.team_members)) {
+          const teamTable = document.getElementById("summary-team-members");
+          teamTable.innerHTML = "";
+          data.team_members.filter(m => m.first_name || m.last_name || m.gender || m.nationality || m.member_group).forEach(member => {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>${member.first_name}</td><td>${member.last_name}</td><td>${member.gender}</td><td>${member.nationality}</td><td>${member.member_group || ""}</td>`;
+            teamTable.appendChild(row);
+          });
+        }
+
+        if (data.arrival_groups && Array.isArray(data.arrival_groups)) {
+          const arrivalTable = document.getElementById("summary-arrival-groups");
+          arrivalTable.innerHTML = "";
+          data.arrival_groups.filter(g => g.arrival || g.departure || g.members || g.accommodation).forEach(group => {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>${group.id}</td><td>${group.arrival}</td><td>${group.departure}</td><td>${group.members}</td><td>${group.accommodation}</td>`;
+            arrivalTable.appendChild(row);
+          });
+        }
+
+        if (data.equipment && Array.isArray(data.equipment)) {
+          const equipTable = document.getElementById("summary-equipment");
+          equipTable.innerHTML = "";
+          data.equipment.filter(e => e.type || e.quantity || e.licensed).forEach(equip => {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>${equip.type}</td><td>${equip.quantity}</td><td>${equip.licensed}</td>`;
+            equipTable.appendChild(row);
+          });
+        }
+      }
+
+      function downloadSubmission() {
+        const element = document.getElementById("summaryContent");
+
+        // Retrieve stored submission data from localStorage
+        const data = JSON.parse(localStorage.getItem("researchIntakeSubmission"));
+
+        if (!data) {
+          alert("No submission data found. Please submit the form first.");
+          return;
+        }
+
+        // Fill the summary content before generating the PDF
+        fillSummary(data);
+        hideEmptySummarySections();
+
+        // Force rendering of hidden content (temporarily show it)
+        element.style.display = "block";
+
+        // Allow rendering to happen first
+        setTimeout(() => {
+          html2pdf()
+            .set({
+              margin: 0.5,
+              filename: "Research_Application_Summary.pdf",
+              image: { type: "jpeg", quality: 0.98 },
+              html2canvas: { scale: 2 },
+              jsPDF: { unit: "in", format: "letter", orientation: "portrait" }
+            })
+            .from(element)
+            .save()
+            .then(() => {
+              // Hide again after download
+              element.style.display = "none";
+            });
+        }, 200); // Wait a bit to ensure fillSummary has updated the content
+      }
+
+
+
+
+    
+      function hideEmptySummarySections() {
+        const sections = document.querySelectorAll("#summaryContent > h3");
+        sections.forEach(heading => {
+          const content = heading.nextElementSibling;
+          let isEmpty = true;
+
+          // Check subsequent siblings until the next <h3> or end
+          let next = content;
+          while (next && next.tagName !== "H3") {
+            if (next.textContent.trim() !== "") {
+              isEmpty = false;
+              break;
+            }
+            next = next.nextElementSibling;
+          }
+
+          if (isEmpty) {
+            heading.style.display = "none";
+            next = heading.nextElementSibling;
+            while (next && next.tagName !== "H3") {
+              next.style.display = "none";
+              next = next.nextElementSibling;
+            }
+          }
+        });
+      }
+
+</script>
