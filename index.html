@@ -30,6 +30,41 @@
         });
       }
 
+
+        // Section 5: Arrival/Departure date validation
+        function updateDepartureConstraints() {
+          const tbody = document.getElementById("groupsTable").querySelector("tbody");
+          const today = new Date().toISOString().split("T")[0];
+
+          for (let row of tbody.rows) {
+            const arrivalInput = row.cells[1].querySelector("input");
+            const departureInput = row.cells[2].querySelector("input");
+
+            if (arrivalInput) {
+              arrivalInput.setAttribute("min", today);
+              arrivalInput.addEventListener("change", function () {
+                const arrivalDate = this.value;
+                if (departureInput) {
+                  departureInput.setAttribute("min", arrivalDate);
+                }
+              });
+
+              // Trigger the constraint update on load
+              if (departureInput && arrivalInput.value) {
+                departureInput.setAttribute("min", arrivalInput.value);
+              }
+            }
+          }
+        }
+
+        // Call on page load and when rows are dynamically added
+        window.addEventListener("load", updateDepartureConstraints);
+        const originalAddGroupRow = addGroupRow;
+        addGroupRow = function(index = null) {
+          originalAddGroupRow(index);
+          updateDepartureConstraints();
+        };
+
 </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -188,6 +223,7 @@
         <div class="option-block">
           <label><input type="radio" name="applicant_type" value="Researcher">
             Researcher</label>
+          <label><input type="radio" name="applicant_type" value="Accommodation Only"> Requesting accommodation only</label>
           <label><input type="radio" name="applicant_type" value="Other">
             Other</label>
         </div>
@@ -330,9 +366,8 @@
       <div id="section6" style="display: none;">
         <h2>Section 6: Permit Information</h2>
 
-        <label>Do you confirm that you are applying for a Scientific Research
-          License from the Nunavut Research
-          Institute?*<br>
+        <label>Do you confirm that you are applying for all the permits and licenses required for your project*<br>
+          <a href="https://www.nri.nu.ca/frequently-asked-questions" target="blank"> Refer to the Nunavut Research Institute website to determine if you need licensing</a><br>
           <input type="radio" name="nri_license" value="Yes" required> Yes
           <input type="radio" name="nri_license" value="No"> No
         </label>
@@ -365,11 +400,10 @@
         <h2>Section 7: Relevance to Northerners and POLAR’s Priorities</h2>
 
         <label>
-          How does your project contribute to POLAR’s priorities and address
-          issues relevant to Northerners, Indigenous
-          governments, and organizations?*<br>
+          Does your project contribute to POLAR’s priorities, if so how? *<br>
+          <a href="https://www.canada.ca/content/dam/polar-polaire/documents/pdf/science-technology-framework/science-technology-framework-2020-2025-EN.pdf" target="blank"> POLAR Science and Technology Framework<a/><br>
           <small>You may use point form or bullet points.</small>
-          <textarea name="northern_relevance" rows="6" required></textarea>
+          <textarea name="Project Relevance" rows="6" required></textarea>
         </label>
 
         <label>
@@ -397,7 +431,7 @@
       <div id="section8" style="display: none;">
         <h2>Section 8: Funding</h2>
 
-        <label>Are you a recipient of POLAR funding?*<br>
+        <label>Are you a recipient of POLAR funding (i.e. Grants, contributions, or awards)*<br>
           <input type="radio" name="polar_funding" value="Yes" required onclick="toggleFundingField(true)"> Yes
           <input type="radio" name="polar_funding" value="No" onclick="toggleFundingField(false)"> No
         </label>
@@ -414,13 +448,13 @@
       <div id="section9" style="display: none;">
         <h2>Section 9: Partnership with POLAR</h2>
 
-        <label>Does your project involve a partnership with POLAR staff?*<br>
+        <label>Does your project involve a partnership with POLAR (i.e. Research Partnership or other)*<br>
           <input type="radio" name="polar_partnership" value="Yes" required onclick="toggleStaffContact(true)"> Yes
           <input type="radio" name="polar_partnership" value="No" onclick="toggleStaffContact(false)"> No
         </label>
 
         <div id="staffContactField" style="display: none;">
-          <label>Name of your primary POLAR staff contact* <input type="text" name="staff_contact_name"></label>
+          <label>Name of your primary POLAR contact* <input type="text" name="staff_contact_name"></label>
         </div>
 
         <div style="margin-top: 1em;">
@@ -428,8 +462,26 @@
           <button type="button" class="button" onclick="nextSection()">Next</button>
         </div>
       </div>
-      <div id="section10" style="display: none;">
-        <h2>Section 10: Community Engagement</h2>
+      
+<div id="section11" style="display: none;">
+  <h2>Section 10: S&T Technical Services</h2>
+  <label>Would you like to request S&T technical services as part of your project request?*<br>
+    <input type="radio" name="st_technical_services" value="Yes" required onclick="toggleTechnicalRequest(true)"> Yes
+    <input type="radio" name="st_technical_services" value="No" onclick="toggleTechnicalRequest(false)"> No
+  </label>
+  <div id="technicalRequestField" style="display: none;">
+    <label>Please describe your request below.*<br>
+      <textarea name="st_request_description" rows="5" required></textarea>
+    </label>
+  </div>
+  <div style="margin-top: 1em;">
+    <button type="button" class="button" onclick="previousSection()">Previous</button>
+    <button type="button" class="button" onclick="nextSection()">Next</button>
+  </div>
+</div>
+
+<div id="section12" style="display: none;">
+        <h2>Section 11: Community Engagement</h2>
 
         <label>Will you engage the community of Cambridge Bay or the local
           authorities?*<br>
@@ -459,8 +511,8 @@
           <button type="button" class="button" onclick="nextSection()">Next</button>
         </div>
       </div>
-      <div id="section11" style="display: none;">
-        <h2>Section 11: Operational Support – Equipment</h2>
+      <div id="section12" style="display: none;">
+        <h2>Section 12: Operational Support – Equipment</h2>
 
         <label>Are you requesting the use of POLAR vehicles or machinery?*<br>
           <input type="radio" name="request_equipment" value="Yes" required onclick="toggleEquipmentTable(true)"> Yes
@@ -499,8 +551,8 @@
           <button type="button" class="button" onclick="nextSection()">Next</button>
         </div>
       </div>
-      <div id="section12" style="display: none;">
-        <h2>Section 12: Operational Support – Personnel</h2>
+      <div id="section13" style="display: none;">
+        <h2>Section 13: Operational Support – Personnel</h2>
 
         <label>Are you requesting access to one or more of POLAR's Field
           Technicians?*<br>
@@ -529,8 +581,8 @@
           <button type="button" class="button" onclick="nextSection()">Next</button>
         </div>
       </div>
-      <div id="section13" style="display: none;">
-        <h2>Section 13: Operational Support – Computing</h2>
+      <div id="section14" style="display: none;">
+        <h2>Section 14: Operational Support – Computing</h2>
 
         <label>Are you requesting use of the computer studio?*<br>
           <input type="radio" name="use_computer_studio" value="Yes" required>
@@ -557,8 +609,8 @@
           <button type="button" class="button" onclick="nextSection()">Next</button>
         </div>
       </div>
-      <div id="section14" style="display: none;">
-        <h2>Section 14: Operational Support – Firearms</h2>
+      <div id="section15" style="display: none;">
+        <h2>Section 15: Operational Support – Firearms</h2>
 
         <label>Will you be bringing firearms or ammunition to CHARS?*<br>
           <input type="radio" name="firearms" value="Yes" required> Yes
@@ -570,8 +622,8 @@
           <button type="button" class="button" onclick="nextSection()">Next</button>
         </div>
       </div>
-      <div id="section15" style="display: none;">
-        <h2>Section 15: Operational Support – Expedited Goods (Shipping)</h2>
+      <div id="section16" style="display: none;">
+        <h2>Section 16: Operational Support – Expedited Goods (Shipping)</h2>
 
         <label>Will you ship material to CHARS?*<br>
           <input type="radio" name="ship_materials" value="Yes" required onclick="toggleShippingDetails(true)"> Yes
@@ -613,8 +665,8 @@
           <button type="button" class="button" onclick="nextSection()">Next</button>
         </div>
       </div>
-      <div id="section16" style="display: none;">
-        <h2>Section 16: Operational Support – Expedited Goods (Storage)</h2>
+      <div id="section17" style="display: none;">
+        <h2>Section 17: Operational Support – Expedited Goods (Storage)</h2>
 
         <label>If you have materials already stored at CHARS, under what name
           are they stored?
@@ -648,8 +700,8 @@
           <button type="button" class="button" onclick="nextSection()">Next</button>
         </div>
       </div>
-      <div id="section17" style="display: none;">
-        <h2>Section 17: Operational Support – Laboratory Space</h2>
+      <div id="section18" style="display: none;">
+        <h2>Section 18: Operational Support – Laboratory Space</h2>
 
         <label>Are you requesting laboratory space?*<br>
           <input type="radio" name="lab_space" value="Yes" required onclick="toggleLabDetails(true)"> Yes
@@ -709,8 +761,8 @@
           <button type="button" class="button" onclick="nextSection()">Next</button>
         </div>
       </div>
-      <div id="section18" style="display: none;">
-        <h2>Section 18: Polar Continental Shelf Program (PCSP) Equipment</h2>
+      <div id="section19" style="display: none;">
+        <h2>Section 19: Polar Continental Shelf Program (PCSP) Equipment</h2>
 
         <label>Do you anticipate bringing equipment provided by the PCSP?*<br>
           <input type="radio" name="pcsp_equipment" value="Yes" required> Yes
@@ -722,8 +774,8 @@
           <button type="button" class="button" onclick="nextSection()">Next</button>
         </div>
       </div>
-      <div id="section19" style="display: none;">
-        <h2>Section 19: Submit Application</h2>
+      <div id="section20" style="display: none;">
+        <h2>Section 20: Submit Application</h2>
 
         <p><strong>Before submitting your application, ensure the
             following:</strong></p>
@@ -738,6 +790,7 @@
           <li>Signed waivers and Terms of Conditions of Occupancy</li>
           <li>Details on space and equipment needs</li>
           <li>Proof of training and vehicle licenses</li>
+          <li>Identification Documentation (ID or Passport)</li>
         </ul>
 
         <p>Details on CHARS public spaces: <a
@@ -826,12 +879,12 @@
       <p><strong>POLAR Staff Partnership:</strong> <span data-summary="polar_partnership"></span></p>
       <p><strong>Staff Contact Name:</strong> <span data-summary="staff_contact_name"></span></p>
 
-      <h3>Section 10: Community Engagement</h3>
+      <h3>Section 11: Community Engagement</h3>
       <p><strong>Engaging Community:</strong> <span data-summary="engage_community"></span></p>
       <p><strong>Sharing Results:</strong> <span data-summary="share_results"></span></p>
       <p><strong>Engagement Plan:</strong><br><span data-summary="engagement_plan"></span></p>
 
-      <h3>Section 11: Operational Support – Equipment</h3>
+      <h3>Section 12: Operational Support – Equipment</h3>
       <p><strong>Requesting POLAR Equipment:</strong> <span data-summary="request_equipment"></span></p>
       <div>
         <strong>Equipment Requested:</strong>
@@ -839,31 +892,31 @@
       </div>
       <p><strong>Training Selected:</strong> <span data-summary="training[]"></span></p>
 
-      <h3>Section 12: Operational Support – Personnel</h3>
+      <h3>Section 13: Operational Support – Personnel</h3>
       <p><strong>Request Field Technicians:</strong> <span data-summary="request_technicians"></span></p>
       <p><strong>Personnel Support Required:</strong> <span data-summary="personnel_support[]"></span></p>
       <p><strong>Other Support Specified:</strong> <span data-summary="personnel_other"></span></p>
 
-      <h3>Section 13: Operational Support – Computing</h3>
+      <h3>Section 14: Operational Support – Computing</h3>
       <p><strong>Use Computer Studio:</strong> <span data-summary="use_computer_studio"></span></p>
       <p><strong>Computer Requirements:</strong> <span data-summary="computer_requirements"></span></p>
       <p><strong>Request Network Connection:</strong> <span data-summary="network_connection"></span></p>
 
-      <h3>Section 14: Operational Support – Firearms</h3>
+      <h3>Section 15: Operational Support – Firearms</h3>
       <p><strong>Bringing Firearms:</strong> <span data-summary="firearms"></span></p>
 
-      <h3>Section 15: Expedited Goods – Shipping</h3>
+      <h3>Section 16: Expedited Goods – Shipping</h3>
       <p><strong>Shipping Materials to CHARS:</strong> <span data-summary="ship_materials"></span></p>
       <p><strong>Hazardous Materials:</strong> <span data-summary="hazardous_materials"></span></p>
       <p><strong>Hazardous Acknowledgment:</strong> <span data-summary="hazardous_acknowledgment"></span></p>
       <p><strong>Cold Storage Required:</strong> <span data-summary="cold_storage"></span></p>
       <p><strong>Shipping Equipment:</strong> <span data-summary="ship_equipment"></span></p>
 
-      <h3>Section 16: Expedited Goods – Storage</h3>
+      <h3>Section 17: Expedited Goods – Storage</h3>
       <p><strong>Stored Material Name:</strong> <span data-summary="storage_name"></span></p>
       <p><strong>Storage Acknowledgment:</strong> <span data-summary="storage_acknowledgment"></span></p>
 
-      <h3>Section 17: Laboratory Space</h3>
+      <h3>Section 18: Laboratory Space</h3>
       <p><strong>Request Lab Space:</strong> <span data-summary="lab_space"></span></p>
       <p><strong>Require Water/Sinks:</strong> <span data-summary="lab_water"></span></p>
       <p><strong>Require Fume Hoods:</strong> <span data-summary="lab_fume_hoods"></span></p>
@@ -871,10 +924,10 @@
       <p><strong>Selected Labs:</strong> <span data-summary="labs[]"></span></p>
       <p><strong>Lab Certification Acknowledged:</strong> <span data-summary="lab_certification"></span></p>
 
-      <h3>Section 18: PCSP Equipment</h3>
+      <h3>Section 19: PCSP Equipment</h3>
       <p><strong>Bringing PCSP Equipment:</strong> <span data-summary="pcsp_equipment"></span></p>
 
-      <h3>Section 19: Final Submission</h3>
+      <h3>Section 20: Final Submission</h3>
       <p><strong>Privacy Acknowledgment:</strong> <span data-summary="privacy_agreement"></span></p>
 
     </div>
@@ -1116,9 +1169,9 @@
 
       const sections = [
         "section1", "section2", "section3", "section4", "section5",
-        "section6", "section7", "section8", "section9", "section10",
-        "section11", "section12", "section13", "section14", "section15",
-        "section16", "section17", "section18", "section19"
+        "section6", "section7", "section8", "section9", "section11",
+        "section12", "section13", "section14", "section15", "section16",
+        "section17", "section18", "section19", "section20"
       ];
       let currentSection = 0;
 
@@ -1132,6 +1185,13 @@
 
 
       function nextSection() {
+        const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value;
+        if (sections[currentSection] === 'section5' && applicantType === 'Accommodation Only') {
+          currentSection = sections.indexOf('section20');
+          showSection(currentSection);
+          saveProgress();
+          return;
+        }
         if (currentSection < sections.length - 1) {
           currentSection++;
           showSection(currentSection);
@@ -1140,6 +1200,13 @@
       }
 
       function previousSection() {
+        const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value;
+        if (sections[currentSection] === 'section20' && applicantType === 'Accommodation Only') {
+          currentSection = sections.indexOf('section5');
+          showSection(currentSection);
+          saveProgress();
+          return;
+        }
         if (currentSection > 0) {
           currentSection--;
           showSection(currentSection);
@@ -1212,7 +1279,12 @@
         document.getElementById("shippingDetails").style.display = show ? "block" : "none";
       }
 
-      function toggleLabDetails(show) {
+      
+function toggleTechnicalRequest(show) {
+  document.getElementById("technicalRequestField").style.display = show ? "block" : "none";
+}
+
+function toggleLabDetails(show) {
         document.getElementById("labDetails").style.display = show ? "block" : "none";
       }
 
@@ -1580,5 +1652,40 @@
           }
         });
       }
+
+
+        // Section 5: Arrival/Departure date validation
+        function updateDepartureConstraints() {
+          const tbody = document.getElementById("groupsTable").querySelector("tbody");
+          const today = new Date().toISOString().split("T")[0];
+
+          for (let row of tbody.rows) {
+            const arrivalInput = row.cells[1].querySelector("input");
+            const departureInput = row.cells[2].querySelector("input");
+
+            if (arrivalInput) {
+              arrivalInput.setAttribute("min", today);
+              arrivalInput.addEventListener("change", function () {
+                const arrivalDate = this.value;
+                if (departureInput) {
+                  departureInput.setAttribute("min", arrivalDate);
+                }
+              });
+
+              // Trigger the constraint update on load
+              if (departureInput && arrivalInput.value) {
+                departureInput.setAttribute("min", arrivalInput.value);
+              }
+            }
+          }
+        }
+
+        // Call on page load and when rows are dynamically added
+        window.addEventListener("load", updateDepartureConstraints);
+        const originalAddGroupRow = addGroupRow;
+        addGroupRow = function(index = null) {
+          originalAddGroupRow(index);
+          updateDepartureConstraints();
+        };
 
 </script>
