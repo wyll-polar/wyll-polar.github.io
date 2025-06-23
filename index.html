@@ -221,7 +221,7 @@
 
         <label>Applicant Type*</label>
         <div class="option-block">
-          <label><input type="radio" name="applicant_type" value="Researcher">
+          <label><input type="radio" name="applicant_type" value="Researcher" required>
             Researcher</label>
           <label><input type="radio" name="applicant_type" value="Accommodation Only"> Requesting accommodation only</label>
           <label><input type="radio" name="applicant_type" value="Other">
@@ -229,8 +229,8 @@
         </div>
 
         <label>Intake Period (select all that apply):</label>
-        <div class="option-block">
-          <label><input type="checkbox" name="intake_period" value="Intake 1">
+        <div class="option-block" data-required-group="intake_period">
+          <label><input type="checkbox" name="intake_period" value="Intake 1" required>
             Intake 1 (March 1 – June 30)</label>
           <label><input type="checkbox" name="intake_period" value="Intake 2">
             Intake 2 (July 1 – October 31)</label>
@@ -265,7 +265,7 @@
 
         <label>Is the primary contact the same as the applicant?*<br>
           <input type="radio" name="same_as_applicant" value="Yes" required onclick="togglePrimaryContact(false)"> Yes
-          <input type="radio" name="same_as_applicant" value="No" onclick="togglePrimaryContact(true)"> No
+          <input type="radio" name="same_as_applicant" value="No" required onclick="togglePrimaryContact(true)"> No
         </label>
 
         <div id="primaryContactFields" style="display: none;">
@@ -385,11 +385,12 @@
           Not Applicable
         </label>
 
-        <label>
-          <input type="checkbox" name="permit_acknowledgment" required>
-          I read the above statements and agree to submit the required
-          documentation to CHARS.
-        </label>
+        <div class="checkbox-group" data-required-group>
+  <label>
+    <input type="checkbox" name="permit_acknowledgment" required>
+    I read the above statements and agree to submit the required documentation to CHARS.
+  </label>
+</div>
 
         <div style="margin-top: 1em;">
           <button type="button" class="button" onclick="previousSection()">Previous</button>
@@ -433,7 +434,7 @@
 
         <label>Are you a recipient of POLAR funding (i.e. Grants, contributions, or awards)*<br>
           <input type="radio" name="polar_funding" value="Yes" required onclick="toggleFundingField(true)"> Yes
-          <input type="radio" name="polar_funding" value="No" onclick="toggleFundingField(false)"> No
+          <input type="radio" name="polar_funding" value="No" required onclick="toggleFundingField(false)"> No
         </label>
 
         <div id="fundingField" style="display: none;">
@@ -463,15 +464,15 @@
         </div>
       </div>
       
-<div id="section11" style="display: none;">
+<div id="section10" style="display: none;">
   <h2>Section 10: S&T Technical Services</h2>
   <label>Would you like to request S&T technical services as part of your project request?*<br>
     <input type="radio" name="st_technical_services" value="Yes" required onclick="toggleTechnicalRequest(true)"> Yes
-    <input type="radio" name="st_technical_services" value="No" onclick="toggleTechnicalRequest(false)"> No
+    <input type="radio" name="st_technical_services" value="No" required onclick="toggleTechnicalRequest(false)"> No
   </label>
   <div id="technicalRequestField" style="display: none;">
     <label>Please describe your request below.*<br>
-      <textarea name="st_request_description" rows="5" required></textarea>
+      <textarea name="st_request_description" rows="5"></textarea>
     </label>
   </div>
   <div style="margin-top: 1em;">
@@ -480,7 +481,7 @@
   </div>
 </div>
 
-<div id="section12" style="display: none;">
+<div id="section11" style="display: none;">
         <h2>Section 11: Community Engagement</h2>
 
         <label>Will you engage the community of Cambridge Bay or the local
@@ -501,7 +502,7 @@
           engaging the community.*<br>
           <small>Maximum 150 words.</small>
           <textarea name="engagement_plan" rows="5" maxlength="1500" oninput="countWords(this, 'engagementCounter')"
-            required></textarea>
+            ></textarea>
           <div id="engagementCounter" style="font-size: 0.9em; color: #555;">0
             / 150 words</div>
         </label>
@@ -614,7 +615,7 @@
 
         <label>Will you be bringing firearms or ammunition to CHARS?*<br>
           <input type="radio" name="firearms" value="Yes" required> Yes
-          <input type="radio" name="firearms" value="No"> No
+          <input type="radio" name="firearms" value="No" required> No
         </label>
 
         <div style="margin-top: 1em;">
@@ -637,6 +638,8 @@
             <input type="radio" name="hazardous_materials" value="No"> No
           </label>
 
+          <div class="checkbox-group" data-required-group>
+
           <label>
             <input type="checkbox" name="hazardous_acknowledgment" required>
             I understand that I am required to dispose of hazardous materials
@@ -645,6 +648,8 @@
             required to arrange shipping materials
             back to my home institution or out of Cambridge Bay.
           </label>
+          </div>
+
 
           <label>Will you ship materials that require freezer or refrigeration
             space?*<br>
@@ -689,11 +694,13 @@
         </ul>
         </p>
 
+        <div class="checkbox-group" data-required-group>
         <label>
           <input type="checkbox" name="storage_acknowledgment" required>
           I understand I will be required to submit shipping and storage
           information to CHARS.
         </label>
+        </div>
 
         <div style="margin-top: 1em;">
           <button type="button" class="button" onclick="previousSection()">Previous</button>
@@ -747,13 +754,15 @@
               Teaching Lab</label><br>
             <label><input type="checkbox" name="labs[]" value="Wet Lab Anteroom"> Wet Lab Anteroom</label>
           </div>
-
+          <div class="checkbox-group" data-required-group>
           <label>
             <input type="checkbox" name="lab_certification" required>
             I understand that upon acceptance of my application, I will be
             required to provide proof of certification in
             fire extinguishing and WHMIS. See <a href="https://whmis.org/" target="_blank">whmis.org</a>.
           </label>
+          </div>
+
         </div>
 
         <div style="margin-top: 1em;">
@@ -800,13 +809,14 @@
             href="https://www.canada.ca/en/treasury-board-secretariat/services/access-information-privacy/access-information/information-about-programs-information-holdings.html"
             target="_blank">Access to Information Act</a> and <strong>Privacy
             Act</strong>.</p>
-
+            <div class="checkbox-group" data-required-group>
         <label>
           <input type="checkbox" name="privacy_agreement" required>
           I understand the above statement, confirm that the information in
           this document is accurate, and agree to
           POLAR requirements.
         </label>
+        </div>
 
         <div style="margin-top: 1em;">
           <button type="button" class="button" onclick="previousSection()">Previous</button>
@@ -879,6 +889,10 @@
       <p><strong>POLAR Staff Partnership:</strong> <span data-summary="polar_partnership"></span></p>
       <p><strong>Staff Contact Name:</strong> <span data-summary="staff_contact_name"></span></p>
 
+      <h3>Section 10: S&T Technical Services</h3>
+      <p><strong>Request Technical Services</strong><span data-summary="st_technical_services"></span><p>
+      <p><strong>Technical Services Description</strong><span data-summary="st_request_description"></span><p>
+
       <h3>Section 11: Community Engagement</h3>
       <p><strong>Engaging Community:</strong> <span data-summary="engage_community"></span></p>
       <p><strong>Sharing Results:</strong> <span data-summary="share_results"></span></p>
@@ -931,6 +945,12 @@
       <p><strong>Privacy Acknowledgment:</strong> <span data-summary="privacy_agreement"></span></p>
 
     </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+  (function(){
+    emailjs.init("kUtUMk6RWW5wp5Q91"); // Your public key
+  })();</script>
+
     <script>
       const countryOptions = `
     <option value="">-- Select --</option>
@@ -1169,7 +1189,7 @@
 
       const sections = [
         "section1", "section2", "section3", "section4", "section5",
-        "section6", "section7", "section8", "section9", "section11",
+        "section6", "section7", "section8", "section9", "section10", "section11",
         "section12", "section13", "section14", "section15", "section16",
         "section17", "section18", "section19", "section20"
       ];
@@ -1183,21 +1203,66 @@
         document.getElementById("progressBar").style.width = ((index + 1) / sections.length * 100) + "%";
       }
 
+function nextSection() {
+  const sectionEl = document.getElementById(sections[currentSection]);
 
-      function nextSection() {
-        const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value;
-        if (sections[currentSection] === 'section5' && applicantType === 'Accommodation Only') {
-          currentSection = sections.indexOf('section20');
-          showSection(currentSection);
-          saveProgress();
-          return;
-        }
-        if (currentSection < sections.length - 1) {
-          currentSection++;
-          showSection(currentSection);
-          saveProgress();
-        }
+  // Validate required inputs before moving on
+  const requiredFields = sectionEl.querySelectorAll("input[required], select[required], textarea[required]");
+  let valid = true;
+
+  requiredFields.forEach(input => {
+    const isRadioGroup = input.type === "radio" && input.name;
+    if (isRadioGroup) {
+      const groupChecked = sectionEl.querySelectorAll(`input[name="${input.name}"]:checked`).length > 0;
+      if (!groupChecked) {
+        valid = false;
+        input.classList.add("error");
+      } else {
+        input.classList.remove("error");
       }
+    } else if (!input.value.trim()) {
+      valid = false;
+      input.classList.add("error");
+    } else {
+      input.classList.remove("error");
+    }
+  });
+
+  // ✅ New: Validate required checkbox groups
+  const requiredCheckboxGroups = sectionEl.querySelectorAll('[data-required-group]');
+  requiredCheckboxGroups.forEach(group => {
+    const checkboxes = group.querySelectorAll('input[type="checkbox"]');
+    const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+    if (!anyChecked) {
+      valid = false;
+      group.classList.add("error");
+    } else {
+      group.classList.remove("error");
+    }
+  });
+
+  if (!valid) {
+    alert("Please complete all required fields before proceeding.");
+    return;
+  }
+
+  // Special skip logic
+  const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value;
+  if (sections[currentSection] === 'section5' && applicantType === 'Accommodation Only') {
+    currentSection = sections.indexOf('section20');
+    showSection(currentSection);
+    saveProgress();
+    return;
+  }
+
+  // Move to next section
+  if (currentSection < sections.length - 1) {
+    currentSection++;
+    showSection(currentSection);
+    saveProgress();
+  }
+}
+
 
       function previousSection() {
         const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value;
@@ -1430,7 +1495,7 @@ function toggleLabDetails(show) {
             }
           }
 
-          const groupCount = parseInt(data.group_count || "0");
+          /*const groupCount = parseInt(data.group_count || "0");
           data.arrival_groups = [];
 
           for (let i = 1; i <= groupCount; i++) {
@@ -1470,7 +1535,7 @@ function toggleLabDetails(show) {
               nationality: Array.isArray(nationalities) ? nationalities[i] : nationalities,
             });
           }
-          data.team_members = teamMembers;
+          /*data.team_members = teamMembers;
 
           // Optional: Remove the original arrays if you want a cleaner final object
           delete data["member_first[]"];
@@ -1497,7 +1562,7 @@ function toggleLabDetails(show) {
           // Optional cleanup
           delete data["equipment_type[]"];
           delete data["equipment_quantity[]"];
-          delete data["equipment_licensed[]"];
+          delete data["equipment_licensed[]"];*/
 
 
 
@@ -1507,6 +1572,17 @@ function toggleLabDetails(show) {
 
           // Save it as JSON for Power Automate (to be sent later)
           const packagedJSON = JSON.stringify(data);
+
+          // EmailJS setup
+          emailjs.init("kUtUMk6RWW5wp5Q91");
+          emailjs.send("service_96vpr37", "template_sjldwde", {
+            message: packagedJSON
+          })
+          .then(function(response) {
+            console.log("✅ Email sent!", response.status, response.text);
+          }, function(error) {
+            console.error("❌ Failed to send email:", error);});
+
 
           // ✅ For testing, store in localStorage temporarily
           localStorage.setItem("researchIntakeSubmission", packagedJSON);
@@ -1519,7 +1595,6 @@ function toggleLabDetails(show) {
           localStorage.removeItem("researchIntakeDraft");
           localStorage.removeItem("currentSectionIndex");
 
-          // 📤 Optional: sendToPowerAutomate(packagedJSON);
         });
 
       };
