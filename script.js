@@ -1,9 +1,24 @@
-//Variable definitions
-//*********************
+/*
+ * script.js (FULL REORGANIZED)
+ *
+ * ⚠️ OVERVIEW:
+ * - Section A: All helper & utility functions (unchanged code blocks)
+ * - Section B: Bootstrap (DOMContentLoaded) wrapping
+ *   • EmailJS init
+ *   • Language switcher
+ *   • Form initialization (progress, appId, countryOptions)
+ *   • Submit handler (data build, table rendering, JSON send, UI updates)
+ *   • Toggle listeners & dynamic updates
+ *   • Download button hookup
+ */
 
-//Country options
+// ---------------------------
+// SECTION A: ORIGINAL HELPERS
+// ---------------------------
+
+// 1) Country options HTML
 const countryOptions = `
-    <option value="">-- Select --</option>
+    <option value=""><span data-i18n-key="ph.select"></span></option>
     <option value="Canada">Canada</option>
     <option value="United States">United States</option>
     <option value="United Kingdom">United Kingdom</option>
@@ -236,8 +251,47 @@ const countryOptions = `
     <option value="Zambia">Zambia</option>
     <option value="Zimbabwe">Zimbabwe</option>
   `;
+// 2) Form progress helpers
+function saveProgress() {
+  const formData = new FormData(document.getElementById("intakeForm"));
+  const values = {};
+  for (let [key, value] of formData.entries()) {
+    if (!values[key]) {
+      values[key] = value;
+    } else if (Array.isArray(values[key])) {
+      values[key].push(value);
+    } else {
+      values[key] = [values[key], value];
+    }
+  }
+  localStorage.setItem("researchIntakeDraft", JSON.stringify(values));
+  localStorage.setItem("currentSectionIndex", currentSection.toString());
+}
+function loadProgress() {
+  const saved = localStorage.getItem("researchIntakeDraft");
+  const sectionIndex = parseInt(localStorage.getItem("currentSectionIndex"), 10);
+  if (saved) {
+    const values = JSON.parse(saved);
+    for (let key in values) {
+      const field = document.getElementsByName(key);
+      if (field.length > 1 && Array.isArray(values[key])) {
+        field.forEach((el, i) => {
+          if (values[key][i]) el.value = values[key][i];
+        });
+      } else if (field[0]) {
+        field[0].value = values[key];
+      }
+    }
+  }
+  if (!isNaN(sectionIndex)) {
+    currentSection = sectionIndex;
+  }
+  showSection(currentSection);
 
-//Form Sections
+  updateDepartureConstraints();
+}
+
+// 3) Section navigation
 const sections = [
   "section1", "section2", "section3", "section4", "section5",
   "section6", "section7", "section8", "section9", "section10", "section11",
@@ -245,47 +299,43 @@ const sections = [
   "section17", "section18", "section19", "section20"
 ];
 
-//Initialize Current Section at 0
-let currentSection = 0;
+function renderNavButtons() {
+  const lang = localStorage.getItem('lang') || 'en';       // your current language
+  const nav = document.getElementById('navContainer');
+  nav.innerHTML = '';                                      // clear old buttons
 
-//Toggle variables
-const startInput = document.getElementById("labUseStart");
-const endInput = document.getElementById("labUseEnd");
-const equipmentRadios = document.getElementsByName("bringing_equipment");
-const equipmentListDiv = document.getElementById("equipment_list_div");
-const leavingRadios = document.getElementsByName("leaving_equipment");
-const equipmentLeftDiv = document.getElementById("equipment_left_div");
-const hazardousRadios = document.getElementsByName("using_hazardous");
-const hazardousDetailsDiv = document.getElementById("hazardous_details_div");
-const ppeRadios = document.getElementsByName("has_ppe");
-const ppeDiv = document.getElementById("ppe_description_div");
-const disposalRadios = document.getElementsByName("has_disposal_plan");
-const disposalDiv = document.getElementById("disposal_plan_div");
-const labTechRadios = document.getElementsByName("lab-tech_support");
-const labTechDiv = document.getElementById("labTechSupportDiv");
-const afterHoursRadios = document.getElementsByName("after_hours");
-const afterHoursDiv = document.getElementById("afterHoursReasonDiv");
-const engageRadios = document.getElementsByName("engage_community");
-const engagementDiv = document.getElementById("engagementPlanDiv");
+  // PREVIOUS
+  if (currentSection > 0) {
+    const prev = document.createElement('button');
+    prev.className = 'button';
+    prev.setAttribute('data-i18n-key', 'button.previous');
+    prev.textContent = window.i18n[lang]['button.previous'];
+    prev.onclick = previousSection;
+    nav.appendChild(prev);
+  }
 
-
-//email.js initialization
-(function () {
-  emailjs.init("kUtUMk6RWW5wp5Q91"); // Your public key
-})();
-
-
-
-//Navigation Function definitions
-//******************************
-function showSection(index) {
-  sections.forEach((id, i) => {
-    document.getElementById(id).style.display = i === index ? "block" : "none";
-    setSectionValidation(id, i === index);  // 👈 Enable validation only for the visible section
-  });
-  document.getElementById("progressBar").style.width = ((index + 1) / sections.length * 100) + "%";
+  // NEXT
+  if (currentSection < sections.length - 1) {
+    const next = document.createElement('button');
+    next.className = 'button';
+    next.setAttribute('data-i18n-key', 'button.next');
+    next.textContent = window.i18n[lang]['button.next'];
+    next.onclick = nextSection;
+    nav.appendChild(next);
+  }
 }
 
+let currentSection = 0;
+function showSection(index) {
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.style.display = i === index ? 'block' : 'none';
+    setSectionValidation(id, i === index);
+  });
+  document.getElementById('progressBar').style.width = ((index + 1) / sections.length * 100) + '%';
+  currentSection = index;
+  renderNavButtons()
+}
 //For next button Logic
 function nextSection() {
   const sectionEl = document.getElementById(sections[currentSection]);
@@ -338,8 +388,8 @@ function nextSection() {
 
   // Special skip logic
   const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value;
-  if (sections[currentSection] === 'section5' && applicantType === 'Accommodation Only') {
-    currentSection = sections.indexOf('section21');
+  if (sections[currentSection] === 'section4' && applicantType === 'Accommodation Only') {
+    currentSection = sections.indexOf('section20');
     showSection(currentSection);
     saveProgress();
     return;
@@ -352,12 +402,10 @@ function nextSection() {
     saveProgress();
   }
 }
-
-//For prev button logic
 function previousSection() {
   const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value;
   if (sections[currentSection] === 'section20' && applicantType === 'Accommodation Only') {
-    currentSection = sections.indexOf('section5');
+    currentSection = sections.indexOf('section4');
     showSection(currentSection);
     saveProgress();
     return;
@@ -368,109 +416,139 @@ function previousSection() {
     saveProgress();
   }
 }
-
-//Progress Function Definitions
-//*****************************
-//Save progress locally as the form is filled
-function saveProgress() {
-  const formData = new FormData(document.getElementById("intakeForm"));
-  const values = {};
-  for (let [key, value] of formData.entries()) {
-    if (!values[key]) {
-      values[key] = value;
-    } else if (Array.isArray(values[key])) {
-      values[key].push(value);
-    } else {
-      values[key] = [values[key], value];
-    }
+// 4) Validation & dynamic constraint helper
+function setSectionValidation(sectionId, enable) {
+  // Guard: ensure the section element exists
+  const sectionEl = document.getElementById(sectionId);
+  if (!sectionEl) {
+    console.warn(`⚠️ setSectionValidation: section "${sectionId}" not found in DOM`);
+    return;
   }
-  localStorage.setItem("researchIntakeDraft", JSON.stringify(values));
-  localStorage.setItem("currentSectionIndex", currentSection.toString());
+  // Select only required inputs within this section
+  const requiredFields = sectionEl.querySelectorAll("input[required], select[required], textarea[required]");
+  requiredFields.forEach(input => {
+    if (!enable) {
+      // Temporarily disable required on hidden sections
+      input.setAttribute('data-required', input.required);
+      input.required = false;
+    } else if (input.hasAttribute('data-required')) {
+      // Restore original required state
+      input.required = input.getAttribute('data-required') === 'true';
+      input.removeAttribute('data-required');
+    }
+  });
 }
 
-// Load saved form progress from localStorage, if it exists.
-function loadProgress() {
-  const saved = localStorage.getItem("researchIntakeDraft");
-  const sectionIndex = parseInt(localStorage.getItem("currentSectionIndex"), 10);
-  if (saved) {
-    const values = JSON.parse(saved);
-    for (let key in values) {
-      const field = document.getElementsByName(key);
-      if (field.length > 1 && Array.isArray(values[key])) {
-        field.forEach((el, i) => {
-          if (values[key][i]) el.value = values[key][i];
-        });
-      } else if (field[0]) {
-        field[0].value = values[key];
+function updateDepartureConstraints() {
+  const tbody = document.getElementById('groupsTable').querySelector('tbody');
+  const today = new Date().toISOString().split('T')[0];
+  for (let row of tbody.rows) {
+    const arrival = row.cells[1].querySelector('input');
+    const departure = row.cells[2].querySelector('input');
+    if (arrival) {
+      arrival.setAttribute('min', today);
+      arrival.addEventListener('change', () => {
+        if (departure) departure.min = arrival.value;
+      });
+      if (departure && arrival.value) {
+        departure.min = arrival.value;
       }
     }
   }
-  if (!isNaN(sectionIndex)) {
-    currentSection = sectionIndex;
+}
+
+// Disassembly date must not be earlier than installation date
+const installInput = document.getElementById("installationDate");
+const disassemblyInput = document.getElementById("disassemblyDate");
+
+installInput.addEventListener("change", () => {
+  disassemblyInput.min = installInput.value;
+  if (disassemblyInput.value < installInput.value) {
+    disassemblyInput.value = ""; // Clear if disassembly is before install
   }
-  showSection(currentSection);
+});
+
+function applyTranslations(lang) {
+  document.querySelectorAll('[data-i18n-key]').forEach(el => {
+    const key = el.dataset.i18nKey;
+    const text = window.i18n[lang]?.[key];
+    if (!text) return;
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+      el.placeholder = text;
+    } else if (el.tagName === 'OPTION') {
+      el.textContent = text;
+    } else {
+      el.textContent = text;
+    }
+  });
 }
 
-//Other funtion Definitions
-//*************************
-//word counter for textarea with limit
-function countWords(textarea, counterId) {
-  const text = textarea.value.trim();
-  const wordCount = text ? text.split(/\\s+/).length : 0;
-  const limit = parseInt(counterId.includes("summary") ? 200 : 150, 10);
-  const counter = document.getElementById(counterId);
-  counter.textContent = `${wordCount} / ${limit} words`;
-  textarea.setCustomValidity(wordCount > limit ? `Please limit to ${limit} words.` : "");
+// 5) Toggle helpers
+function toggleAcknowledgmentCheckbox(checkboxId, wrapperId, enable) {
+  const checkbox = document.getElementById(checkboxId);
+  const wrapper = document.getElementById(wrapperId);
+
+  if (!checkbox || !wrapper) return;
+
+  if (enable) {
+    checkbox.disabled = false;
+    checkbox.required = true;
+    wrapper.classList.remove("disabled");
+    wrapper.classList.remove("error");
+  } else {
+    checkbox.checked = false;
+    checkbox.disabled = true;
+    checkbox.required = false;
+    wrapper.classList.add("disabled");
+    wrapper.classList.remove("error");
+  }
+}
+function togglePrimaryContact(show) { document.getElementById('primaryContactFields').style.display = show ? 'block' : 'none'; }
+function toggleFundingField(show) { document.getElementById('fundingField').style.display = show ? 'block' : 'none'; }
+function toggleStaffContact(show) { document.getElementById('staffContactField').style.display = show ? 'block' : 'none'; }
+function toggleShippingDetails(show) { document.getElementById('shippingDetails').style.display = show ? 'block' : 'none'; }
+function toggleTechnicalRequest(show) { document.getElementById('technicalRequestField').style.display = show ? 'block' : 'none'; }
+function toggleLabDetails(show) { document.getElementById('labDetails').style.display = show ? 'block' : 'none'; }
+function toggleLabSelection(show) { document.getElementById('labSelection').style.display = show ? 'block' : 'none'; }
+function toggleEquipmentTable(show) { document.getElementById('equipmentTableSection').style.display = show ? 'block' : 'none'; }
+function togglePersonnelSupport(show) { document.getElementById('personnelSupportSection').style.display = show ? 'block' : 'none'; }
+function toggleSittingEquipmentDetails(show) {document.getElementById('sitting_equipment_details').style.display = show ? 'block' : 'none';}
+function handleShippingYes() {
+  toggleShippingDetails(true);
+  toggleAcknowledgmentCheckbox('hazardousAcknowledgment', 'hazardousAcknowledgmentGroup', true);
 }
 
-// Toggle logic functions
-//**************************
-
-//Toggle Primary Contact Fields
-function togglePrimaryContact(show) {
-  document.getElementById("primaryContactFields").style.display = show ? "block" : "none";
+function handleShippingNo() {
+  toggleShippingDetails(false);
+  toggleAcknowledgmentCheckbox('hazardousAcknowledgment', 'hazardousAcknowledgmentGroup', false);
 }
 
-//Toggle funding number field
-function toggleFundingField(show) {
-  document.getElementById("fundingField").style.display = show ? "block" : "none";
-}
+const startInput = document.getElementById("labUseStart");
+const endInput = document.getElementById("labUseEnd");
+const equipmentRadios = document.getElementsByName("bringing_equipment");
+const equipmentListDiv = document.getElementById("equipment_list_div");
+const leavingRadios = document.getElementsByName("leaving_equipment");
+const equipmentLeftDiv = document.getElementById("equipment_left_div");
+const hazardousRadios = document.getElementsByName("using_hazardous");
+const hazardousDetailsDiv = document.getElementById("hazardous_details_div");
+const ppeRadios = document.getElementsByName("has_ppe");
+const ppeDiv = document.getElementById("ppe_description_div");
+const disposalRadios = document.getElementsByName("has_disposal_plan");
+const disposalDiv = document.getElementById("disposal_plan_div");
+const labTechRadios = document.getElementsByName("lab-tech_support");
+const labTechDiv = document.getElementById("labTechSupportDiv");
+const afterHoursRadios = document.getElementsByName("after_hours");
+const afterHoursDiv = document.getElementById("afterHoursReasonDiv");
+const engageRadios = document.getElementsByName("engage_community");
+const engagementDiv = document.getElementById("engagementPlanDiv");
 
-//toggle statff contact field
-function toggleStaffContact(show) {
-  document.getElementById("staffContactField").style.display = show ? "block" : "none";
-}
-
-//toggle shipping details fields
-function toggleShippingDetails(show) {
-  document.getElementById("shippingDetails").style.display = show ? "block" : "none";
-}
-
-
-//toggle technical request description
-function toggleTechnicalRequest(show) {
-  document.getElementById("technicalRequestField").style.display = show ? "block" : "none";
-}
-
-//toggle lab details fields
-function toggleLabDetails(show) {
-  document.getElementById("labDetails").style.display = show ? "block" : "none";
-}
-
-//toggle lab list
-function toggleLabSelection(show) {
-  document.getElementById("labSelection").style.display = show ? "block" : "none";
-}
-
-//toggle equipment request table
-function toggleEquipmentTable(show) {
-  document.getElementById("equipmentTableSection").style.display = show ? "block" : "none";
-}
-
-//toggle personel support list
-function togglePersonnelSupport(show) {
-  document.getElementById("personnelSupportSection").style.display = show ? "block" : "none";
-}
+//lab use end date can't be before lab use end date
+startInput.addEventListener("change", () => {
+  endInput.min = startInput.value; // Set the min value of end date
+  if (endInput.value < startInput.value) {
+    endInput.value = ""; // Clear end date if it's now invalid
+  }
+});
 
 //Toggle lab equipment
 equipmentRadios.forEach(radio => {
@@ -575,45 +653,18 @@ engageRadios.forEach(radio => {
   });
 });
 
-function toggleSittingEquipmentDetails(show) {
-  document.getElementById('sitting_equipment_details').style.display = show ? 'block' : 'none';
+
+// 6) Word counter validation
+function countWords(textarea, counterId) {
+  const text = textarea.value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  const limit = parseInt(counterId.includes('summary') ? 200 : 150, 10);
+  const counter = document.getElementById(counterId);
+  counter.textContent = `${words} / ${limit}`;
+  textarea.setCustomValidity(words > limit ? `Please limit to ${limit} words.` : '');
 }
 
-function toggleAcknowledgmentCheckbox(checkboxId, wrapperId, enable) {
-  const checkbox = document.getElementById(checkboxId);
-  const wrapper = document.getElementById(wrapperId);
-
-  if (!checkbox || !wrapper) return;
-
-  if (enable) {
-    checkbox.disabled = false;
-    checkbox.required = true;
-    wrapper.classList.remove("disabled");
-    wrapper.classList.remove("error");
-  } else {
-    checkbox.checked = false;
-    checkbox.disabled = true;
-    checkbox.required = false;
-    wrapper.classList.add("disabled");
-    wrapper.classList.remove("error");
-  }
-}
-
-function handleShippingYes() {
-  toggleShippingDetails(true);
-  toggleAcknowledgmentCheckbox('hazardousAcknowledgment', 'hazardousAcknowledgmentGroup', true);
-}
-
-function handleShippingNo() {
-  toggleShippingDetails(false);
-  toggleAcknowledgmentCheckbox('hazardousAcknowledgment', 'hazardousAcknowledgmentGroup', false);
-}
-
-
-//Table function Definitions
-//*******************************/
-
-//Team Members Table
+// 7) Dynamic row functions
 function addMemberRow() {
   const table = document.getElementById("membersTable").querySelector("tbody");
   const row = document.createElement("tr");
@@ -622,10 +673,10 @@ function addMemberRow() {
     <td><input type="text" name="member_last[]" required></td>
     <td>
       <select name="member_gender[]" required>
-        <option value="">-- Select --</option>
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
+        <option value=""><span data-i18n-key="ph.select"></span></option>
+        <option><span data-i18n-key="opt.male"></span></option>
+        <option><span data-i18n-key="opt.fem"></option>
+        <option><span data-i18n-key="label.type_other"></option>
       </select>
     </td>
     <td>
@@ -639,8 +690,9 @@ function addMemberRow() {
     </td>
   `;
   table.appendChild(row);
-}
+  applyTranslations(document.getElementById("languageSwitcher").value);
 
+}
 //Equipment list Table
 function addEquipmentRow() {
   const tbody = document.getElementById("equipmentTable").querySelector("tbody");
@@ -648,39 +700,40 @@ function addEquipmentRow() {
   row.innerHTML = `
             <td>
               <select name="equipment_type[]" required>
-                <option value="">-- Select --</option>
-                <option>16' Boat</option>
-                <option>18' Boat</option>
-                <option>ATVs</option>
-                <option>Canoe</option>
-                <option>Covered Trailers for ATV</option>
-                <option>Electric Fences</option>
-                <option>Flatbed Trailers</option>
-                <option>Generators</option>
-                <option>GPS receivers</option>
-                <option>Ice Auger</option>
-                <option>Inflatable Boat</option>
-                <option>Satellite Communicator</option>
-                <option>Satellite Phone</option>
-                <option>Snowmobile</option>
-                <option>Soil Auger</option>
-                <option>Toboggan</option>
-                <option>Camping Supplies</option>
-                <option>Helmets</option>
-                <option>Scuba Tank</option>
+                <option value=""><span data-i18n-key="ph.select"></span></option>
+                <option><span data-i18n-key="opt.16_boat"></span></option>
+                <option><span data-i18n-key="opt.18_boat"></span></option>
+                <option><span data-i18n-key="opt.atv"></option>
+                <option><span data-i18n-key="opt.canoe"></option>
+                <option><span data-i18n-key="opt.covered_trailer"></option>
+                <option><span data-i18n-key="opt.electric_fence"></option>
+                <option><span data-i18n-key="opt.flatbed_trailer"></option>
+                <option><span data-i18n-key="opt.generator"></option>
+                <option><span data-i18n-key="opt.gps"></option>
+                <option><span data-i18n-key="opt.auger"></option>
+                <option><span data-i18n-key="opt.inflatable_boat"></option>
+                <option><span data-i18n-key="opt.sat_comm"></option>
+                <option><span data-i18n-key="opt.sat_phone"></option>
+                <option><span data-i18n-key="opt.snowmobile"></option>
+                <option><span data-i18n-key="opt.soil_auger"></option>
+                <option><span data-i18n-key="opt.toboggan"></option>
+                <option><span data-i18n-key="opt.camping"></option>
+                <option><span data-i18n-key="opt.helmet"></option>
+                <option><span data-i18n-key="opt.scuba"></option>
               </select>
             </td>
             <td><input type="number" name="equipment_quantity[]" min="1" required></td>
             <td>
               <select name="equipment_licensed[]" required>
                 <option value="">--</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Not Applicable">Not Applicable</option>
+                <option value="Yes"><span data-i18n-key="option.yes"></option>
+                <option value="No"><span data-i18n-key="option.no"></option>
+                <option value="Not Applicable"><span data-i18n-key="opt.na"></option>
               </select>
             </td>
           `;
   tbody.appendChild(row);
+  applyTranslations(document.getElementById("languageSwitcher").value);
 }
 
 //Arrival/Departure groups table
@@ -691,6 +744,9 @@ function generateGroupRows() {
   for (let i = 1; i <= count; i++) {
     addGroupRow(i);
   }
+
+  updateDepartureConstraints();
+  applyTranslations(document.getElementById("languageSwitcher").value);
 }
 
 function addGroupRow(index = null) {
@@ -706,263 +762,154 @@ function addGroupRow(index = null) {
             <td>
               <select name="accommodation_${groupNum}" required>
                 <option value="">--</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+                <option value="Yes"><span data-i18n-key="option.yes"></span></option>
+                <option value="No"><span data-i18n-key="option.no"></option>
                 </select>
                 </td>
                 `;
   tbody.appendChild(row);
+  applyTranslations(document.getElementById("languageSwitcher").value);
 }
 
-//Window.onload
-//**************** */
-// Run this function when the page finishes loading
-window.onload = function () {
-  // Load any previously saved form data (if returning to the form)
-  loadProgress();
+// 8) Download submission helper
+function downloadSubmission() {
+  const packaged = localStorage.getItem('researchIntakeSubmission');
+  if (!packaged) return alert('No submission data found.');
+  const data = JSON.parse(packaged);
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'Research_Application_Data.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  alert('Submission successful! JSON downloaded.');
+}
 
-  // Generate or retrieve a unique Application ID to associate with this submission
-  let appId = localStorage.getItem("applicationId");
-  if (!appId) {
-    appId = crypto.randomUUID(); // Generates a new unique ID
-    localStorage.setItem("applicationId", appId);
+
+// ---------------------------
+// SECTION B: BOOTSTRAP (DOMContentLoaded)
+// ---------------------------
+document.addEventListener('DOMContentLoaded', () => {
+  // 0) EmailJS init
+  if (window.emailjs && typeof emailjs.init === 'function') {
+    emailjs.init('kUtUMk6RWW5wp5Q91');
   }
 
-  // Set the Application ID field in the form
-  document.getElementById("applicationId").value = appId;
+  // 1) Language switcher
+  const switcher = document.getElementById('languageSwitcher');
+  if (switcher) {
+    const lang = localStorage.getItem('lang') || 'en';
+    switcher.value = lang;
+    applyTranslations(lang);
+    switcher.addEventListener('change', e => {
+      localStorage.setItem('lang', e.target.value);
+      applyTranslations(e.target.value);
+      renderNavButtons();
+    });
+  }
 
-  // Populate the country <select> options (defined in a separate countryOptions variable)
-  document.getElementById("institutionCountry").innerHTML = countryOptions;
+  // 2) Load saved progress & set Application ID
+  loadProgress();
+  applyTranslations(document.getElementById("languageSwitcher").value);
+  const appId = localStorage.getItem('applicationId') || crypto.randomUUID();
+  localStorage.setItem('applicationId', appId);
+  document.getElementById('applicationId').value = appId;
 
-  // Attach a submit handler to the form
-  document.getElementById("intakeForm").addEventListener("submit", function (e) {
-    e.preventDefault(); // Prevent the default form submission
+  // 3) Populate country dropdown
+  document.getElementById('institutionCountry').innerHTML = countryOptions;
 
+  // 4) Form submission handler
+  document.getElementById('intakeForm').addEventListener('submit', e => {
+    e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
     const data = {};
-
-    // Convert FormData into a plain object (handles checkboxes and multiple entries)
-    for (let [key, value] of formData.entries()) {
-      if (data[key]) {
-        if (!Array.isArray(data[key])) {
-          data[key] = [data[key]];
-        }
-        data[key].push(value);
-      } else {
-        data[key] = value;
-      }
+    for (let [k, v] of formData.entries()) {
+      if (data[k]) {
+        if (!Array.isArray(data[k])) data[k] = [data[k]];
+        data[k].push(v);
+      } else data[k] = v;
     }
-
-    // Collect group information into structured `arrival_groups` array
-    const groupCount = parseInt(data.group_count || "0");
+    // arrival_groups packaging
+    const count = parseInt(data.group_count || '0', 10);
     data.arrival_groups = [];
-
-    for (let i = 1; i <= groupCount; i++) {
-      const group = {
+    for (let i = 1; i <= count; i++) {
+      data.arrival_groups.push({
         application_id: appId,
         id: i,
         arrival: data[`arrival_${i}`],
         departure: data[`departure_${i}`],
         members: data[`members_${i}`],
         accommodation: data[`accommodation_${i}`]
-      };
-      data.arrival_groups.push(group);
+      });
+      delete data[`arrival_${i}`]; delete data[`departure_${i}`]; delete data[`members_${i}`]; delete data[`accommodation_${i}`];
     }
 
-    // Clean up redundant flat fields after packaging
-    for (let i = 1; i <= groupCount; i++) {
-      delete data[`arrival_${i}`];
-      delete data[`departure_${i}`];
-      delete data[`members_${i}`];
-      delete data[`accommodation_${i}`];
+   /*  // 5) TABLE & SUMMARY LOGIC
+    // Team members table
+    if (data.team_members && Array.isArray(data.team_members)) {
+      const tbl = document.getElementById('summary-team-members'); tbl.innerHTML = '';
+      data.team_members.filter(m => m.first_name || m.last_name).forEach(m => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${m.first_name}</td><td>${m.last_name}</td><td>${m.gender}</td><td>${m.nationality}</td><td>${m.member_group || ''}</td>`;
+        tbl.appendChild(row);
+      });
     }
+    // Arrival groups table
+    if (data.arrival_groups) {
+      const t = document.getElementById('summary-arrival-groups'); t.innerHTML = '';
+      data.arrival_groups.forEach(g => {
+        const r = document.createElement('tr');
+        r.innerHTML = `<td>${g.id}</td><td>${g.arrival}</td><td>${g.departure}</td><td>${g.members}</td><td>${g.accommodation}</td>`;
+        t.appendChild(r);
+      });
+    }
+    // Equipment summary
+    if (data.equipment && Array.isArray(data.equipment)) {
+      const t = document.getElementById('summary-equipment'); t.innerHTML = '';
+      data.equipment.forEach(eq => {
+        const r = document.createElement('tr');
+        r.innerHTML = `<td>${eq.type}</td><td>${eq.quantity}</td><td>${eq.licensed}</td>`;
+        t.appendChild(r);
+      });
+    } */
 
-    // Prepare JSON string for submission and further processing
+    // 6) Send JSON via EmailJS
     const packagedJSON = JSON.stringify(data);
+    console.log('📦 Packaged Data:', data);
+    emailjs.send('service_96vpr37', 'template_sjldwde', { message: packagedJSON });
 
-    // ✅ Log the data for testing and debugging purposes
-    console.log("📦 Packaged Data:", data);
-
-    // Initialize and send data using EmailJS
-    emailjs.init("kUtUMk6RWW5wp5Q91"); // Your public EmailJS key
-    emailjs.send("service_96vpr37", "template_sjldwde", {
-      message: packagedJSON // Send as a raw JSON string
-    })
-      .then(function (response) {
-        console.log("✅ Email sent!", response.status, response.text);
-      }, function (error) {
-        console.error("❌ Failed to send email:", error);
-      });
-
-    // Store packaged JSON in localStorage for retrieval (e.g. by download button)
-    localStorage.setItem("researchIntakeSubmission", packagedJSON);
-
-    // Hide the form and display a thank-you message
-    form.style.display = "none";
-    document.getElementById("thankYouMessage").style.display = "block";
-
-    // Clear saved draft progress (clean slate for next session)
-    localStorage.removeItem("researchIntakeDraft");
-    localStorage.removeItem("currentSectionIndex");
+    // 7) Store & UI update
+    localStorage.setItem('researchIntakeSubmission', packagedJSON);
+    form.style.display = 'none';
+    document.getElementById('thankYouMessage').style.display = 'block';
+    localStorage.removeItem('researchIntakeDraft');
+    localStorage.removeItem('currentSectionIndex');
   });
-};
 
-// Call on page load and when rows are dynamically added
-window.addEventListener("load", updateDepartureConstraints);
-const originalAddGroupRow = addGroupRow;
-addGroupRow = function (index = null) {
-  originalAddGroupRow(index);
-  updateDepartureConstraints();
-};
 
-//Validation Function Defs and logic:
-//************************* *********/
-function setSectionValidation(sectionId, enable) {
-  const inputs = document.querySelectorAll(`#${sectionId} input, #${sectionId} select, #${sectionId} textarea`);
-  inputs.forEach(input => {
-    if (!enable) {
-      input.setAttribute("data-required", input.required);
-      input.required = false;
-    } else if (input.hasAttribute("data-required")) {
-      input.required = input.getAttribute("data-required") === "true";
-      input.removeAttribute("data-required");
+
+  // 8) Toggle listeners & dynamic UI
+  const toggleGroups = [
+    { radiosName: 'bringing_equipment', divId: 'equipment_list_div' },
+    { radiosName: 'leaving_equipment', divId: 'equipment_left_div' },
+    { radiosName: 'using_hazardous', divId: 'hazardous_details_div' },
+    { radiosName: 'has_ppe', divId: 'ppe_description_div' },
+    { radiosName: 'has_disposal_plan', divId: 'disposal_plan_div' },
+    { radiosName: 'lab-tech_support', divId: 'labTechSupportDiv' },
+    { radiosName: 'after_hours', divId: 'afterHoursReasonDiv' },
+    { radiosName: 'engage_community', divId: 'engagementPlanDiv' }
+  ];
+  toggleGroups.forEach(({ radiosName, divId }) => {
+    const radios = document.getElementsByName(radiosName);
+    const div = document.getElementById(divId);
+    if (radios && div) {
+      div.style.display = 'none';
+      radios.forEach(r => r.addEventListener('change', e => {
+        div.style.display = e.target.value === 'Yes' ? 'block' : 'none';
+      }));
     }
   });
-}
-// Section 5: Arrival/Departure date validation
-function updateDepartureConstraints() {
-  const tbody = document.getElementById("groupsTable").querySelector("tbody");
-  const today = new Date().toISOString().split("T")[0];
 
-  for (let row of tbody.rows) {
-    const arrivalInput = row.cells[1].querySelector("input");
-    const departureInput = row.cells[2].querySelector("input");
+  // 9) Download button
+  document.getElementById('downloadJson')?.addEventListener('click', downloadSubmission);
 
-    if (arrivalInput) {
-      arrivalInput.setAttribute("min", today);
-      arrivalInput.addEventListener("change", function () {
-        const arrivalDate = this.value;
-        if (departureInput) {
-          departureInput.setAttribute("min", arrivalDate);
-        }
-      });
-
-      // Trigger the constraint update on load
-      if (departureInput && arrivalInput.value) {
-        departureInput.setAttribute("min", arrivalInput.value);
-      }
-    }
-  }
-}
-
-//lab use end date can't be before lab use end date
-startInput.addEventListener("change", () => {
-  endInput.min = startInput.value; // Set the min value of end date
-  if (endInput.value < startInput.value) {
-    endInput.value = ""; // Clear end date if it's now invalid
-  }
 });
-
-// Section 5: Arrival/Departure date validation
-function updateDepartureConstraints() {
-  const tbody = document.getElementById("groupsTable").querySelector("tbody");
-  const today = new Date().toISOString().split("T")[0];
-
-  for (let row of tbody.rows) {
-    const arrivalInput = row.cells[1].querySelector("input");
-    const departureInput = row.cells[2].querySelector("input");
-
-    if (arrivalInput) {
-      arrivalInput.setAttribute("min", today);
-      arrivalInput.addEventListener("change", function () {
-        const arrivalDate = this.value;
-        if (departureInput) {
-          departureInput.setAttribute("min", arrivalDate);
-        }
-      });
-
-      // Trigger the constraint update on load
-      if (departureInput && arrivalInput.value) {
-        departureInput.setAttribute("min", arrivalInput.value);
-      }
-    }
-  }
-}
-
-// Disassembly date must not be earlier than installation date
-const installInput = document.getElementById("installationDate");
-const disassemblyInput = document.getElementById("disassemblyDate");
-
-installInput.addEventListener("change", () => {
-  disassemblyInput.min = installInput.value;
-  if (disassemblyInput.value < installInput.value) {
-    disassemblyInput.value = ""; // Clear if disassembly is before install
-  }
-});
-
-//Data & JSON formatting logic and function defs
-//******************************************** */
-// Handle special structures (team members, equipment, arrival groups)
-if (data.team_members && Array.isArray(data.team_members)) {
-  const teamTable = document.getElementById("summary-team-members");
-  teamTable.innerHTML = "";
-  data.team_members.filter(m => m.first_name || m.last_name || m.gender || m.nationality || m.member_group).forEach(member => {
-    const row = document.createElement("tr");
-    row.innerHTML = `<td>${member.first_name}</td><td>${member.last_name}</td><td>${member.gender}</td><td>${member.nationality}</td><td>${member.member_group || ""}</td>`;
-    teamTable.appendChild(row);
-  });
-}
-
-if (data.arrival_groups && Array.isArray(data.arrival_groups)) {
-  const arrivalTable = document.getElementById("summary-arrival-groups");
-  arrivalTable.innerHTML = "";
-  data.arrival_groups.filter(g => g.arrival || g.departure || g.members || g.accommodation).forEach(group => {
-    const row = document.createElement("tr");
-    row.innerHTML = `<td>${group.id}</td><td>${group.arrival}</td><td>${group.departure}</td><td>${group.members}</td><td>${group.accommodation}</td>`;
-    arrivalTable.appendChild(row);
-  });
-}
-
-if (data.equipment && Array.isArray(data.equipment)) {
-  const equipTable = document.getElementById("summary-equipment");
-  equipTable.innerHTML = "";
-  data.equipment.filter(e => e.type || e.quantity || e.licensed).forEach(equip => {
-    const row = document.createElement("tr");
-    row.innerHTML = `<td>${equip.type}</td><td>${equip.quantity}</td><td>${equip.licensed}</td>`;
-    equipTable.appendChild(row);
-  });
-}
-
-//Submission download
-function downloadSubmission() {
-  const packagedJSON = localStorage.getItem("researchIntakeSubmission");
-
-  if (!packagedJSON) {
-    alert("No submission data found. Please submit the form first.");
-    return;
-  }
-
-  // Parse and pretty-print the JSON
-  const data = JSON.parse(packagedJSON);
-  const prettyJSON = JSON.stringify(data, null, 2);
-
-  const blob = new Blob([prettyJSON], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "Research_Application_Data.json";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  alert("Submission successful! JSON file downloaded.");
-}
-
-
-
-
-
-
-
-

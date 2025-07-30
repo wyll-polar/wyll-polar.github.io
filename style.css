@@ -12,7 +12,22 @@ header {
   color: white;
   padding: 1em;
   text-align: center;
+
+  /* add this so the select can be absolutely positioned relative to the header */
+  position: relative;
 }
+
+#languageSwitcher {
+  position: absolute;
+  top: 50%;                  /* vertically center in the header */
+  right: 1em;                /* distance from the right edge */
+  transform: translateY(-50%);
+
+  width: 6rem;               /* adjust as needed to fit “Français” */
+  padding: 0.25rem;
+  font-size: 0.9rem;
+}
+
 
 .container {
   max-width: 800px;
@@ -127,4 +142,10 @@ th {
 .checkbox-group.disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+
+#navContainer {
+  display: flex;
+  justify-content: flex-start; /* or flex‑start, flex‑end, as you prefer */
+  gap: 1rem;               /* the space between each button */
 }

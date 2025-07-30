@@ -12,7 +12,12 @@
 
 <body>
   <header>
-    <h1>Research Intake Form</h1>
+    <h1 for="title" data-i18n-key="h1.title">Research Intake Form</h1>
+    <select id="languageSwitcher">
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+    </select>
+
   </header>
   <div class="container">
     <div class="progress-bar">
@@ -21,68 +26,53 @@
     <form id="intakeForm">
       <input id="applicationId" name="application_id" type="hidden" />
       <div id="section1">
-        <h2>Section 1: Applicant Type &amp; Intake Period</h2>
-        <label>Applicant Type*</label>
+        <h2 for="s1" data-i18n-key="h2.s1">Section 1: Applicant Type &amp; Intake Period</h2>
+        <label for="applicant_type" data-i18n-key="label.applicant_type">Applicant Type*</label>
         <div class="option-block">
-          <label><input name="applicant_type" required="" type="radio" value="Researcher" />
-            Researcher</label>
-          <label><input name="applicant_type" type="radio" value="Accommodation Only" /> Requesting accommodation
-            only</label>
+          <label ><input name="applicant_type" required="" type="radio" value="Researcher" />
+            <span data-i18n-key="label.type_researcher"></span></label>
+          <label><input name="applicant_type" type="radio" value="Accommodation Only" /> <span data-i18n-key="label.type_accom"></span></label>
           <label><input name="applicant_type" type="radio" value="Other" />
-            Other</label>
+            <span data-i18n-key="label.type_other"></span></label>
         </div>
-        <label>Intake Period (select all that apply):</label>
+        <label data-i18n-key="label.intake_period">Intake Period (select all that apply):</label>
         <div class="option-block" data-required-group="intake_period">
           <label><input name="intake_period" required="" type="checkbox" value="Intake 1" />
-            Intake 1 (March 1 – June 30)</label>
+           <span data-i18n-key="label.intake_1"></span></label>
           <label><input name="intake_period" type="checkbox" value="Intake 2" />
-            Intake 2 (July 1 – October 31)</label>
+            <span data-i18n-key="label.intake_2"></span></label>
           <label><input name="intake_period" type="checkbox" value="Intake 3" />
-            Intake 3 (Nov 1 – Feb 28)</label>
+            <span data-i18n-key="label.intake_3"></span></label>
         </div>
-        <button class="button" onclick="nextSection()" type="button">Next</button>
       </div>
       <div id="section2" style="display: none;">
-        <h2>Section 2: Applicant Contact Information</h2>
-        <label>First Name* <input name="applicant_first_name" required="" type="text" /></label>
-        <label>Last Name* <input name="applicant_last_name" required="" type="text" /></label>
-        <label>Email* <input name="applicant_email" required="" type="email" /></label>
-        <label>Name of University or Institution* <input name="institution_name" required="" type="text" /></label>
-        <label>Country of University or Institution*</label>
+        <h2><span data-i18n-key="h2.s2"></span></h2>
+        <label><span data-i18n-key="label.firstname"></span> <input name="applicant_first_name" required="" type="text" /></label>
+        <label><span data-i18n-key="label.lastname"></span><input name="applicant_last_name" required="" type="text" /></label>
+        <label><span data-i18n-key="label.email"></span> <input name="applicant_email" required="" type="email" /></label>
+        <label><span  data-i18n-key="label.institution"></span> <input name="institution_name" required="" type="text" /></label>
+        <label><span data-i18n-key="label.country"></span></label>
         <select id="institutionCountry" name="institution_country" required=""></select>
-        <label>Full Mailing Address* <textarea name="institution_address" required="" rows="3"></textarea></label>
-        <label>Province/Territory/State* <input name="province" required="" type="text" /></label>
-        <label>Phone Number* <input name="phone" required="" type="tel" /></label>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
-        </div>
+        <label><span data-i18n-key="label.address"></span> <textarea name="institution_address" required="" rows="3"></textarea></label>
+        <label><span data-i18n-key="label.province"></span> <input name="province" required="" type="text" /></label>
+        <label><span data-i18n-key="label.phone"></span><input name="phone" required="" type="tel" /></label>
       </div>
       <div id="section3" style="display: none;">
-        <h2>Section 3: Project Information</h2>
-        <label>Project Name* <input name="project_name" required="" type="text" /></label>
+        <h2><span data-i18n-key="h2.s3"></span></h2>
+        <label><span data-i18n-key="label.project_name"></span><input name="project_name" required="" type="text" /></label>
         <label>
-          Project Summary*<br />
-          <small>Briefly describe the project objectives, research questions,
-            methodology, and if you plan to use CHARS
-            labs, field equipment, or erect structures. (200 words
-            max)</small>
+          <span data-i18n-key="label.project_summary"></span><br />
+          <small><span data-i18n-key="small.describe_project"></span></small>
           <textarea maxlength="2000" name="project_summary" oninput="countWords(this, 'summaryCounter')" required=""
             rows="6"></textarea>
-          <div id="summaryCounter" style="font-size: 0.9em; color: #555;">0 /
-            200 words</div>
+          <div id="summaryCounter" style="font-size: 0.9em; color: #555;"><span data-i18n-key="word_counter"></span></div>
         </label>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
-        </div>
       </div>
       <div id="section4" style="display: none;">
-        <h2>Section 4: Team Composition</h2>
-        <label>How many different arrival and departure groups do you need to
-          plan for?*<br />
+        <h2><span data-i18n-key="h2.s4"></span></h2>
+        <label><span data-i18n-key="label.group_count"></span><br />
           <select id="groupCount" name="group_count" onchange="generateGroupRows()" required="">
-            <option value="">-- Select a number --</option>
+            <option value=""><span data-i18n-key="number_select"></span></option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -94,87 +84,74 @@
             <option value="9">9</option>
           </select>
         </label>
-        <h3>Arrival/Departure Information</h3>
+        <h3><span data-i18n-key="h2.arrivl"></span></h3>
         <table id="groupsTable">
           <thead>
             <tr>
-              <th>Group #</th>
-              <th>Arrival Date</th>
-              <th>Departure Date</th>
-              <th># of Team Members</th>
-              <th>Needs Accommodation?</th>
+              <th><span data-i18n-key="th.group"></span></th>
+              <th><span data-i18n-key="th.arrival"></span></th>
+              <th><span data-i18n-key="th.departure"></span></th>
+              <th><span data-i18n-key="th.team_count"></span></th>
+              <th><span data-i18n-key="th.accom"></span></th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
         <div style="margin-top: 1em;">
-          <button class="button" onclick="addGroupRow()" type="button">+ Add
-            Group</button>
+          <button class="button" onclick="addGroupRow()" type="button"><span data-i18n-key="button.add_group"></span></button>
         </div>
-        <h3>Team Members</h3>
+        <h3><span data-i18n-key="h3.team_memebers"></span></h3>
         <table id="membersTable">
           <thead>
             <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Gender</th>
-              <th>Nationality</th>
-              <th>Group #</th>
+              <th><span data-i18n-key="th.firstname"></span></th>
+              <th><span data-i18n-key="th.lastname"></span></th>
+              <th><span data-i18n-key="th.gender"></span></th>
+              <th><span data-i18n-key="th.nationality"></span></th>
+              <th><span data-i18n-key="th.group#"></span></th>
             </tr>
           </thead>
           <tbody></tbody>
         </table>
         <div style="margin-top: 1em;">
-          <button class="button" onclick="addMemberRow()" type="button">+ Add
-            Team Member</button>
+          <button class="button" onclick="addMemberRow()" type="button"><span data-i18n-key="button.add_member"></span></button>
         </div>
         <div style="margin-top: 1em;">
-          <div style="margin-top: 1em;">
-            <button class="button" onclick="previousSection()" type="button">Previous</button>
-            <button class="button" onclick="nextSection()" type="button">Next</button>
-          </div>
         </div>
       </div>
       <div id="section5" style="display: none;">
-        <h2>Section 5: Permit Information</h2>
-        <label>Do you confirm that you are applying for all the permits and licenses required for your project*<br />
-          <a href="https://www.nri.nu.ca/frequently-asked-questions" target="blank"> Refer to the Nunavut Research
-            Institute website to determine if you need licensing</a><br />
-          <input name="nri_license" required="" type="radio" value="Yes" /> Yes
-          <input name="nri_license" type="radio" value="No" /> No
+        <h2><span data-i18n-key="h2.s5"></span></h2>
+        <label><span data-i18n-key="label.permit_confirm"></span><br />
+          <a href="https://www.nri.nu.ca/frequently-asked-questions" target="blank"><span data-i18n-key="a.nri"></span></a><br />
+          <input name="nri_license" required="" type="radio" value="Yes" /><span data-i18n-key="option.yes"></span>
+          <input name="nri_license" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
-        <label>Are permits required for your research other than the
-          Scientific Research License?*<br />
-          <input name="other_permits" required="" type="radio" value="Yes" /> Yes
-          <input name="other_permits" type="radio" value="No" /> No
+        <label><span data-i18n-key="label.other_permits"></span><br />
+          <input name="other_permits" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+          <input name="other_permits" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
-        <label>Have the permits been issued?*<br />
-          <input name="permits_issued" required="" type="radio" value="Yes" /> Yes
-          <input name="permits_issued" type="radio" value="No" /> No
-          <input name="permits_issued" type="radio" value="Not Applicable" />
-          Not Applicable
+        <label><span data-i18n-key="label.permits_issued"></span><br />
+          <input name="permits_issued" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+          <input name="permits_issued" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
+          <input name="permits_issued" type="radio" value="Not Applicable" /> <span data-i18n-key="opt.na"></span>
         </label>
         <div class="checkbox-group" data-required-group="">
           <label>
             <input name="permit_acknowledgment" required="" type="checkbox" />
-            I read the above statements and agree to submit the required documentation to CHARS.
+            <span data-i18n-key="check.permit_acknowledgement"></span>
           </label>
-        </div>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
         </div>
       </div>
       <div id="section6" style="display: none;">
-        <h2>Section 6: Relevance to Northerners and POLAR’s Priorities</h2>
+        <h2><span data-i18n-key="h2.s6"></span></h2>
         <label>
-          Does your project contribute to POLAR’s priorities, if so how? *<br />
+         <span data-i18n-key="s&t_contribution"></span><br />
           <a href="https://www.canada.ca/content/dam/polar-polaire/documents/pdf/science-technology-framework/science-technology-framework-2020-2025-EN.pdf"
-            target="blank"> POLAR Science and Technology Framework<a></a><br />
-            <small>You may use point form or bullet points.</small>
+            target="blank"> <span data-i18n-key="a.framework"></span><a></a><br />
+            <small><span data-i18n-key="small.instructions"></span></small>
             <textarea name="Project Relevance" required="" rows="6"></textarea>
           </a></label>
-        <label>
+        <!-- <label>
           Based on the S&amp;T Framework, select the goal that best applies to
           your project:*<br />
           <input name="st_goal" required="" type="radio" value="Goal 1" />
@@ -189,511 +166,416 @@
           Goal 3: Advancing sustainable energy, technology and infrastructure
           solutions for the unique environmental,
           social and cultural conditions in the North.
-        </label>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
-        </div>
+        </label> -->
       </div>
       <div id="section7" style="display: none;">
-        <h2>Section 7: Funding</h2>
-        <label>Are you a recipient of POLAR funding (i.e. Grants, contributions, or awards)*<br />
-          <input name="polar_funding" onclick="toggleFundingField(true)" required="" type="radio" value="Yes" /> Yes
-          <input name="polar_funding" onclick="toggleFundingField(false)" required="" type="radio" value="No" /> No
+        <h2><span data-i18n-key="h2.s7"></span></h2>
+        <label><span data-i18n-key="label.funding"></span><br />
+          <input name="polar_funding" onclick="toggleFundingField(true)" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+          <input name="polar_funding" onclick="toggleFundingField(false)" required="" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
         <div id="fundingField" style="display: none;">
-          <label>Identify the POLAR Funding Agreement Number* <input name="funding_agreement" type="text" /></label>
-        </div>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
+          <label><span data-i18n-key="label.funding_number"></span><input name="funding_agreement" type="text" /></label>
         </div>
       </div>
       <div id="section8" style="display: none;">
-        <h2>Section 8: Partnership with POLAR</h2>
-        <label>Does your project involve a partnership with POLAR (i.e. Research Partnership or other)*<br />
-          <input name="polar_partnership" onclick="toggleStaffContact(true)" required="" type="radio" value="Yes" /> Yes
-          <input name="polar_partnership" onclick="toggleStaffContact(false)" type="radio" value="No" /> No
+        <h2><span data-i18n-key="h2.s8"></span></h2>
+        <label><span data-i18n-key="label.partnership"></span><br />
+          <input name="polar_partnership" onclick="toggleStaffContact(true)" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+          <input name="polar_partnership" onclick="toggleStaffContact(false)" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
         <div id="staffContactField" style="display: none;">
-          <label>Name of your primary POLAR contact* <input name="staff_contact_name" type="text" /></label>
-        </div>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
+          <label><span data-i18n-key="label.staff_contact"></span><input name="staff_contact_name" type="text" /></label>
         </div>
       </div>
       <div id="section9" style="display: none;">
-        <h2>Section 9: Equipment Sitting</h2>
+        <h2><span data-i18n-key="h2.s9"></span></h2>
         <label>
-          Do you plan to set up any scientific equipment on CHARS campus?*<br />
+         <span data-i18n-key="label.equipment_sitting"></span><br />
           <input name="sitting_equipment" onclick="toggleSittingEquipmentDetails(true)" required="" type="radio"
-            value="Yes" /> Yes
-          <input name="sitting_equipment" onclick="toggleSittingEquipmentDetails(false)" type="radio" value="No" /> No
+            value="Yes" /> <span data-i18n-key="option.yes"></span>
+          <input name="sitting_equipment" onclick="toggleSittingEquipmentDetails(false)" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
         <div id="sitting_equipment_details" style="display: none;">
-          <label>Provide a detailed description of the equipment that you propose to install at CHARS. Include the
-            function, dimensions, description of all components, and any other relevant information:<br />
+          <label><span data-i18n-key="label.describe_sitting"></span><br />
             <textarea name="sitting_equipment_description" rows="3"></textarea>
           </label>
-          <label>Describe any siting requirements (e.g., does the equipment require power, water, internet access,
-            etc.):
+          <label><span data-i18n-key="label.sitting_reqs"></span>
             <textarea name="sitting_equipment_requirements" rows="3"></textarea>
           </label>
-          <label>Describe any potential hazards associated with the equipment. For example, will there be any
-            hazardous/flammable materials kept onsite? Is there a risk of the equipment interfering with other
-            equipment onsite? Any potential noise, odour, radiation, exhaust, hazardous waste, or other concerns?<br />
+          <label><span data-i18n-key="label.sitting_hazards"></span><br />
             <textarea name="sitting_equipment_hazards" rows="3"></textarea>
           </label>
-          <label>Describe your plan for disassembly, removal and disposal of the equipment:<br />
+          <label><span data-i18n-key="label.disassembly_plan"></span><br />
             <textarea name="sitting_equipment_disassembly" rows="3"></textarea>
           </label>
-          
-          <label>Choose an estimated installation date
+
+          <label><span data-i18n-key="label.install_date"></span>
             <input id="installationDate" name="installation_date" type="date" />
           </label>
-          <label>Choose an estimated disassembly date
+          <label><span data-i18n-key="label.disassembly_date"></span>
             <input id="disassemblyDate" name="disassembly_date" type="date" />
           </label>
         </div>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
-        </div>
       </div>
       <div id="section10" style="display: none;">
-        <h2>Section 10: S&amp;T Technical Support</h2>
-        <label>“Would you like to request technical support/maintenance for scientific equipment set up at or near
-          CHARS?”*<br />
+        <h2><span data-i18n-key="h2.s10"></span></h2>
+        <label><span data-i18n-key="label.st_support"></span><br />
           <input name="st_technical_services" onclick="toggleTechnicalRequest(true)" required="" type="radio"
             value="Yes" />
-          Yes
+            <span data-i18n-key="option.yes"></span>
           <input name="st_technical_services" onclick="toggleTechnicalRequest(false)" required="" type="radio"
             value="No" />
-          No
+          <span data-i18n-key="option.no"></span>
         </label>
         <div id="technicalRequestField" style="display: none;">
           <label>
-            Describe the technical support that you will be requesting, including details of tasks, any required
-            training/certifications, timeline, and an estimate of weekly time commitment:*<br />
+           <span data-i18n-key="label.st_support_description"></span><br />
             <textarea name="technicalRequestDescription" rows="4"></textarea>
           </label>
         </div>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
-        </div>
       </div>
       <div id="section11" style="display: none;">
-        <h2>Section 11: Community Engagement</h2>
-        <label>Will you engage the community of Cambridge Bay or the local authorities?*<br />
-          <input name="engage_community" required="" type="radio" value="Yes" /> Yes
-          <input name="engage_community" type="radio" value="No" /> No
+        <h2><span data-i18n-key="h2.s11"></span></h2>
+        <label><span data-i18n-key="label.engage_community"></span><br />
+          <input name="engage_community" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+          <input name="engage_community" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
         <div id="engagementPlanDiv">
           <label>
-            Briefly describe your engagement plan or explain why you are not engaging the community.*<br />
-            <small>Maximum 150 words.</small>
+            <span data-i18n-key="label.engagement_plan"></span><br />
             <textarea maxlength="1500" name="engagement_plan" oninput="countWords(this, 'engagementCounter')"
               rows="5"></textarea>
-            <div id="engagementCounter" style="font-size: 0.9em; color: #555;">0 / 150 words</div>
+            <div id="engagementCounter" style="font-size: 0.9em; color: #555;"><span data-i18n-key="word_counter"></span></div>
           </label>
         </div>
-        <label>Will you share the research results with the community of
-          Cambridge Bay or local authorities?*<br />
-          <input name="share_results" required="" type="radio" value="Yes" /> Yes
-          <input name="share_results" type="radio" value="No" /> No
+        <label><span data-i18n-key="label.share_results"></span><br />
+          <input name="share_results" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+          <input name="share_results" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
-        </div>
       </div>
       <div id="section12" style="display: none;">
-        <h2>Section 12: Operational Support – Equipment</h2>
-        <label>Are you requesting the use of POLAR vehicles or machinery?*<br />
+        <h2><span data-i18n-key="h2.s12"></span></h2>
+        <label><span data-i18n-key="label.request_equipment"></span><br />
           <input name="request_equipment" onclick="toggleEquipmentTable(true)" required="" type="radio" value="Yes" />
-          Yes
-          <input name="request_equipment" onclick="toggleEquipmentTable(false)" type="radio" value="No" /> No
+          <span data-i18n-key="option.yes"></span>
+          <input name="request_equipment" onclick="toggleEquipmentTable(false)" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
         <div id="equipmentTableSection" style="display: none;">
-          <h3>Requested Equipment</h3>
+          <h3><span data-i18n-key="h3.equipment"></span></h3>
           <table id="equipmentTable">
             <thead>
               <tr>
-                <th>Equipment Type</th>
-                <th>Quantity</th>
-                <th>Licensed?</th>
+                <th><span data-i18n-key="th.eq_type"></span></th>
+                <th><span data-i18n-key="th.quantity"></span></th>
+                <th><span data-i18n-key="th.license"></span></th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
-          <button class="button" onclick="addEquipmentRow()" type="button">+
-            Add Equipment</button>
-        </div>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
+          <button class="button" onclick="addEquipmentRow()" type="button"><span data-i18n-key="button.add_eq"></span></button>
         </div>
       </div>
       <div id="section13" style="display: none;">
-        <h2>Section 13: Operational Support – Personnel</h2>
-        <label>Are you requesting access to one or more of POLAR's Field
-          Technicians?*<br />
+        <h2><span data-i18n-key="h2.s13"></span></h2>
+        <label><span data-i18n-key="label.field_tech"></span><br />
           <input name="request_technicians" onclick="togglePersonnelSupport(true)" required="" type="radio"
             value="Yes" />
           Yes
-          <input name="request_technicians" onclick="togglePersonnelSupport(false)" type="radio" value="No" /> No
+          <input name="request_technicians" onclick="togglePersonnelSupport(false)" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
         <div id="personnelSupportSection" style="display: none;">
-          <h3>Identify the types of support you require:</h3>
-          <label><input name="personnel_support[]" type="checkbox" value="Field support" /> Field support (e.g., boat
-            operation, vehicle use, ATV, or snowmobile support)</label><br />
-          <label><input name="personnel_support[]" type="checkbox" value="Guiding" /> Guiding</label><br />
-          <label><input name="personnel_support[]" type="checkbox" value="Wildlife monitoring" /> Wildlife
-            monitoring</label><br />
-          <label><input name="personnel_support[]" type="checkbox" value="Aerial imaging" /> Aerial drone imaging and
-            videography</label><br />
-          <label><input name="personnel_support[]" type="checkbox" value="Sampling" /> Sampling assistance</label><br />
-          <label><input name="personnel_support[]" type="checkbox" value="Other" /> Other:
-            <input name="personnel_other" placeholder="Specify other support" style="margin-top: 0.5em;" type="text" />
+          <h3><span data-i18n-key="h3.field_support"></span></h3>
+          <label><input name="personnel_support[]" type="checkbox" value="Field support" /> <span data-i18n-key="box.field_support"></span></label><br />
+          <label><input name="personnel_support[]" type="checkbox" value="Guiding" /><span data-i18n-key="box.guiding"></span></label><br />
+          <label><input name="personnel_support[]" type="checkbox" value="Wildlife monitoring" /><span data-i18n-key="box.wildlife"></span></label><br />
+          <label><input name="personnel_support[]" type="checkbox" value="Aerial imaging" /> <span data-i18n-key="box.drone"></span></label><br />
+          <label><input name="personnel_support[]" type="checkbox" value="Sampling" /><span data-i18n-key="box.sampling"></span></label><br />
+          <label><input name="personnel_support[]" type="checkbox" value="Other" /><span data-i18n-key="label.type_other"></span>
+            <input name="personnel_other" style="margin-top: 0.5em;" type="text" />
           </label>
-        </div>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
         </div>
       </div>
       <div id="section14" style="display: none;">
-        <h2>Section 14: Operational Support – Computing</h2>
-        <label>Are you requesting use of the computer studio?*<br />
+        <h2><span data-i18n-key="h2.s14"></span></h2>
+        <label><span data-i18n-key="label.computing"></span><br />
           <input name="use_computer_studio" required="" type="radio" value="Yes" />
-          Yes
-          <input name="use_computer_studio" type="radio" value="No" /> No
+          <span data-i18n-key="option.yes"></span>
+          <input name="use_computer_studio" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
         <label>
-          Are you requesting use of a POLAR computer? If yes, briefly describe
-          your requirements:
-          <textarea name="computer_requirements" placeholder="Describe any computing or software needs here..."
+          <span data-i18n-key="label.computer"></span>
+          <textarea name="computer_requirements"
             rows="4"></textarea>
         </label>
-        <label>Are you requesting to set up scientific equipment on CHARS
-          network?*<br />
+        <label><span data-i18n-key="label.network"></span><br />
           <input name="network_connection" required="" type="radio" value="Yes" />
-          Yes
-          <input name="network_connection" type="radio" value="No" /> No
+         <span data-i18n-key="option.yes"></span>
+          <input name="network_connection" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
-        </div>
       </div>
       <div id="section15" style="display: none;">
-        <h2>Section 15: Operational Support – Firearms</h2>
-        <label>Will you be bringing firearms or ammunition to CHARS?*<br />
-          <input name="firearms" required="" type="radio" value="Yes" /> Yes
-          <input name="firearms" required="" type="radio" value="No" /> No
+        <h2><span data-i18n-key="h2.s15"></span></h2>
+        <label><span data-i18n-key="label.firearms"></span><br />
+          <input name="firearms" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+          <input name="firearms" required="" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
-        </div>
       </div>
       <div id="section16" style="display: none;">
-        <h2>Section 16: Operational Support – Expedited Goods (Shipping)</h2>
-        <label>Will you ship material to CHARS?*<br />
-          <input name="ship_materials" onclick="handleShippingYes()" required type="radio" value="Yes" /> Yes
-          <input name="ship_materials" onclick="handleShippingNo()" type="radio" value="No" /> No
+        <h2><span data-i18n-key="h2.s16"></span></h2>
+        <label><span data-i18n-key="label.shipping"></span><br />
+          <input name="ship_materials" onclick="handleShippingYes()" required type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+          <input name="ship_materials" onclick="handleShippingNo()" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
 
         </label>
         <div id="shippingDetails" style="display: none;">
-          <label>Will you ship hazardous materials to CHARS?*<br />
-            <input name="hazardous_materials" required="" type="radio" value="Yes" /> Yes
-            <input name="hazardous_materials" type="radio" value="No" /> No
+          <label><span data-i18n-key="label.ship_hazards"></span><br />
+            <input name="hazardous_materials" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+            <input name="hazardous_materials" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
           </label>
-          <label>Will you ship materials that require freezer or refrigeration
-            space?*<br />
-            <input name="cold_storage" required="" type="radio" value="Yes" /> Yes
-            <input name="cold_storage" type="radio" value="No" /> No
+          <label><span data-i18n-key="label.freezer"></span><br />
+            <input name="cold_storage" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+            <input name="cold_storage" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
           </label>
-          <label>Will you ship laboratory or other equipment?*<br />
+         <!--  <label>Will you ship laboratory or other equipment?*<br />
             <input name="ship_equipment" required="" type="radio" value="Yes" />
             Yes
-            <input name="ship_equipment" type="radio" value="No" /> No
-          </label>
+            <input name="ship_equipment" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
+          </label> -->
         </div>
         <div class="checkbox-group" data-required-group="" id="hazardousAcknowledgmentGroup">
           <label>
             <input id="hazardousAcknowledgment" name="hazardous_acknowledgment" required="" type="checkbox" />
-            I understand that I am required to dispose of hazardous materials
-            I transport to CHARS. To comply with
-            Nunavut rules and regulations regarding hazardous waste, I may be
-            required to arrange shipping materials
-            back to my home institution or out of Cambridge Bay.
+            <span data-i18n-key="box.shipping_ack"></span>
           </label>
-        </div>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
         </div>
       </div>
       <div id="section17" style="display: none;">
-        <h2>Section 17: Operational Support – Expedited Goods (Storage)</h2>
-        <label>If you have materials already stored at CHARS, under what name
-          are they stored?
+        <h2><span data-i18n-key="h2.s17"></span></h2>
+        <label><span data-i18n-key="label.storage_name"></span>
           <input name="storage_name" type="text" />
         </label>
         <p>
-          <strong>Note:</strong> If your application is accepted, you will be
-          required to submit additional shipping and
-          storage details, including:
+          <strong><span data-i18n-key="strong.note"></span></strong> <span data-i18n-key="strong.disclaimer"></span>
         <ul>
-          <li>Shipping methods</li>
-          <li>Service provider</li>
-          <li>Number of containers</li>
-          <li>Anticipated arrival date</li>
-          <li>Contents of materials</li>
-          <li>List of hazardous materials</li>
-          <li>Laboratory equipment</li>
-          <li>Freezer/refrigerator volume required (in cm)</li>
+          <li><span data-i18n-key="li.shipping_methods"></span></li>
+          <li><span data-i18n-key="li.service_provider"></span></li>
+          <li><span data-i18n-key="li.containers"></span></li>
+          <li><span data-i18n-key="li.arrival_date"></span></li>
+          <li><span data-i18n-key="li.content"></span></li>
+          <li><span data-i18n-key="li.hazards"></span></li>
+          <li><span data-i18n-key="li.lab_eq"></span></li>
+          <li><span data-i18n-key="li.freezer_vol"></span></li>
         </ul>
         </p>
         <div class="checkbox-group" data-required-group="">
           <label>
             <input name="storage_acknowledgment" required="" type="checkbox" />
-            I understand I will be required to submit shipping and storage
-            information to CHARS.
+            <span data-i18n-key="box.storage_ack"></span>
           </label>
-        </div>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
         </div>
       </div>
       <div id="section18" style="display: none;">
-        <h2>Section 18: Operational Support – Laboratory Space</h2>
-        <label>Are you requesting laboratory space?*<br />
-          <input name="lab_space" onclick="toggleLabDetails(true)" required="" type="radio" value="Yes" /> Yes
-          <input name="lab_space" onclick="toggleLabDetails(false)" type="radio" value="No" /> No
+        <h2><span data-i18n-key="h2.s18"></span></h2>
+        <label><span data-i18n-key="label.lab_space"></span><br />
+          <input name="lab_space" onclick="toggleLabDetails(true)" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+          <input name="lab_space" onclick="toggleLabDetails(false)" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
         <div id="labDetails" style="display: none;">
-          <label>Do you require water or sinks?*<br />
-            <input name="lab_water" required="" type="radio" value="Yes" /> Yes
-            <input name="lab_water" type="radio" value="No" /> No
+          <label><span data-i18n-key="label.water"></span><br />
+            <input name="lab_water" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+            <input name="lab_water" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
           </label>
-          <label>Do you require fume hoods?*<br />
+          <label><span data-i18n-key="label.fume"></span><br />
             <input name="lab_fume_hoods" required="" type="radio" value="Yes" />
-            Yes
-            <input name="lab_fume_hoods" type="radio" value="No" /> No
+           <span data-i18n-key="option.yes"></span>
+            <input name="lab_fume_hoods" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
           </label>
-          <label>Do you wish to book a specific lab?*<br />
-            <input name="specific_lab" onclick="toggleLabSelection(true)" required="" type="radio" value="Yes" /> Yes
-            <input name="specific_lab" onclick="toggleLabSelection(false)" type="radio" value="No" /> No
+          <label><span data-i18n-key="label.spec_lab"></span><br />
+            <input name="specific_lab" onclick="toggleLabSelection(true)" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+            <input name="specific_lab" onclick="toggleLabSelection(false)" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
           </label>
           <div id="labSelection" style="display: none;">
             <p><strong>Which laboratories do you wish to book?</strong></p>
-            <label><input name="labs[]" type="checkbox" value="Cold Lab" /> Cold
-              Lab</label><br />
-            <label><input name="labs[]" type="checkbox" value="Digital Imaging" /> Digital Imaging (Microscopes
-              Room)</label><br />
-            <label><input name="labs[]" type="checkbox" value="General Analytical Lab" /> General Analytical
-              Lab</label><br />
-            <label><input name="labs[]" type="checkbox" value="Glassware Washer" />Glassware Washer + Autoclave
-              Room</label><br />
-            <label><input name="labs[]" type="checkbox" value="Genomics Lab" />Genomics Lab</label><br />
-            <label><input name="labs[]" type="checkbox" value="Growth Chamber Lab" /> Wet Lab (Growth Chamber
-              Lab)</label><br />
-            <label><input name="labs[]" type="checkbox" value="Mercury Lab" />Mercury Analyser Room</label><br />
-            <label><input name="labs[]" type="checkbox" value="Necropsy Lab" />Necropsy Lab</label><br />
-            <label><input name="labs[]" type="checkbox" value="Necropsy Anteroom" />Necropsy Anteroom</label><br />
-            <label><input name="labs[]" type="checkbox" value="Reference Collection Lab" /> Reference Collection Lab
-              (Herbarium)</label><br />
-            <label><input name="labs[]" type="checkbox" value="Teaching Lab" />Teaching Lab</label><br />
-            <label><input name="labs[]" type="checkbox" value="Wet Lab Anteroom" /> Wet Lab Anteroom</label>
+            <label><input name="labs[]" type="checkbox" value="Cold Lab" /> <span data-i18n-key="box.cold_lab"></span></label><br />
+            <label><input name="labs[]" type="checkbox" value="Digital Imaging" /> <span data-i18n-key="box.imaging"></span></label><br />
+            <label><input name="labs[]" type="checkbox" value="General Analytical Lab" /> <span data-i18n-key="box.analytic"></span></label><br />
+            <label><input name="labs[]" type="checkbox" value="Glassware Washer" /><span data-i18n-key="box.glass"></span></label><br />
+            <label><input name="labs[]" type="checkbox" value="Genomics Lab" /><span data-i18n-key="box.genomic"></span></label><br />
+            <label><input name="labs[]" type="checkbox" value="Growth Chamber Lab" /><span data-i18n-key="box.wet"></span> </label><br />
+            <label><input name="labs[]" type="checkbox" value="Mercury Lab" /><span data-i18n-key="box.mercury"></span></label><br />
+            <label><input name="labs[]" type="checkbox" value="Necropsy Lab" /><span data-i18n-key="box.necropsy"></span></label><br />
+            <label><input name="labs[]" type="checkbox" value="Necropsy Anteroom" /><span data-i18n-key="box.ante"></span></label><br />
+            <label><input name="labs[]" type="checkbox" value="Reference Collection Lab" /><span data-i18n-key="box.herbarium"></span></label><br />
+            <label><input name="labs[]" type="checkbox" value="Teaching Lab" /><span data-i18n-key="box.teaching"></span></label><br />
+            <label><input name="labs[]" type="checkbox" value="Wet Lab Anteroom" /><span data-i18n-key="box.wet_ante"></span></label>
           </div>
           <div class="checkbox-group" data-required-group="">
-            <label>
-              <label>Lab Use Start Date* <input id="labUseStart" name="lab_use_start" required="" type="date" /></label>
-              <label>Lab Use End Date* <input id="labUseEnd" name="lab_use_end" required="" type="date" /></label>
-              <label>Number of People Using Lab* <input min="1" name="lab_user_count" required=""
-                  type="number" /></label>
-              <label>Will you have a third party from town use the labs (youth, elders, contractors, etc.)<br />
-                <input name="third_party_users" required="" type="radio" value="Yes" /> Yes
-                <input name="third_party_users" type="radio" value="No" />No
-              </label>
-              <label>Specific Lab Space Requirements
+            <label><span data-i18n-key="label.lab_reqs"></span>
                 <textarea name="lab_space_notes" rows="3"></textarea>
               </label>
-              <label> Is this a multi-year project? <br />
-                <input name="multi-year" required="" type="radio" value="Yes" /> Yes
-                <input name="multi-year" type="radio" value="No" />No
+            <label>
+              <label><br><span data-i18n-key="label.lab_start"></span> <input id="labUseStart" name="lab_use_start" required="" type="date" /></label>
+              <label><span data-i18n-key="label.lab_end"></span><input id="labUseEnd" name="lab_use_end" required="" type="date" /></label>
+              <label><span data-i18n-key="label.lab_number"></span><input min="1" name="lab_user_count" required=""
+                  type="number" /></label>
+              <label><span data-i18n-key="label.third_party"></span><br />
+                <input name="third_party_users" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                <input name="third_party_users" type="radio" value="No" /><span data-i18n-key="option.no"></span>
               </label>
-              <h3>Sample and Methodology Information</h3>
-              <label>Type of Samples You Will Collect
+              
+              <label> <span data-i18n-key="label.multi-year"></span><br />
+                <input name="multi-year" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                <input name="multi-year" type="radio" value="No" /><span data-i18n-key="option.no"></span>
+              </label>
+              <h3><span data-i18n-key="h3.sample"></span></h3>
+              <label><span data-i18n-key="label.sample"></span>
                 <input name="sample_types" type="text" />
               </label>
-              <label>Sample Storage Method(Room Temperature, 4, -20, -30, -80 ◦C)
+              <label><span data-i18n-key="label.sample_storage"></span>
                 <input name="sample_storage" type="text" />
               </label>
-              <label>Sampling Frequency
+              <label><span data-i18n-key="label.sample_frequency"></span>
                 <input name="sampling_frequency" type="text" />
               </label>
-              <label>Estimated Quantity of Samples
+              <label><span data-i18n-key="label.sample_quantity"></span>
                 <input name="sample_quantity" type="text" />
               </label>
-              <label>Sampling and Analytical Methods
+              <label><span data-i18n-key="label.sample_method"></span>
                 <textarea name="sampling_methods" rows="3"></textarea>
               </label>
-              <h3>Lab Equipment and Instruments</h3>
-              <label>What lab instruments and equipment would you like CHARS to provide?
+              <h3><span data-i18n-key="h3.lab_eq"></span></h3>
+              <label><span data-i18n-key="label.eq_req"></span>
                 <textarea name="lab_instruments" rows="3"></textarea>
               </label>
-              <label>Are You Bringing Your Own Lab Equipment/Instruments?*
-                <input name="bringing_equipment" required="" type="radio" value="Yes" /> Yes
-                <input name="bringing_equipment" type="radio" value="No" /> No
+              <label><span data-i18n-key="label.own_eq"></span>
+                <input name="bringing_equipment" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                <input name="bringing_equipment" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
               </label>
               <div id="equipment_list_div" style="display: none;">
-                <label>List the Equipment You Will Bring
+                <label><span data-i18n-key="label.list_eq"></span>
                   <textarea name="equipment_list" rows="3"></textarea>
                 </label>
               </div>
-              <label>Are You Leaving Lab Equipment or Consumables Behind?* (Subject to availability and approval) <br />
-                <input name="leaving_equipment" required="" type="radio" value="Yes" /> Yes
-                <input name="leaving_equipment" type="radio" value="No" /> No
+              <label><span data-i18n-key="label.leaving_eq"></span> <br />
+                <input name="leaving_equipment" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                <input name="leaving_equipment" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
               </label>
               <div id="equipment_left_div" style="display: none;">
-                <label>List Items to Be Left Behind and for how long
+                <label><span data-i18n-key="label.leaving_eq_list"></span>
                   <textarea name="left_equipment_list" rows="3"></textarea>
                 </label>
               </div>
-              <h3>Hazardous Materials</h3>
-              <label>Are You Using, Shipping, or Storing Hazardous Materials?*
-                <input name="using_hazardous" required="" type="radio" value="Yes" /> Yes
-                <input name="using_hazardous" type="radio" value="No" /> No
+              <h3><span data-i18n-key="h3.hazards"></span></h3>
+              <label><span data-i18n-key="label.lab_hazards"></span>
+                <input name="using_hazardous" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                <input name="using_hazardous" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
               </label>
               <div id="hazardous_details_div" style="display: none;">
-                <label>Type of Hazardous Materials
+                <label><span data-i18n-key="label.lab_hazard_type"></span>
                   <textarea name="hazardous_types" rows="3"></textarea>
                 </label>
-                <label>Do You Have Appropriate PPE?
-                  <input name="has_ppe" type="radio" value="Yes" /> Yes
-                  <input name="has_ppe" type="radio" value="No" /> No
+                <label><span data-i18n-key="label.ppe"></span>
+                  <input name="has_ppe" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                  <input name="has_ppe" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
                 </label>
                 <div id="ppe_description_div">
-                  <label>Describe the PPE You Will Bring
+                  <label><span data-i18n-key="label.ppe_description"></span>
                     <textarea name="ppe_description" rows="3"></textarea>
                   </label>
                 </div>
-                <label>Do You Have a Hazardous Waste Disposal Plan?
-                  <input name="has_disposal_plan" type="radio" value="Yes" /> Yes
-                  <input name="has_disposal_plan" type="radio" value="No" /> No
+                <label><span data-i18n-key="label.waste"></span>
+                  <input name="has_disposal_plan" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                  <input name="has_disposal_plan" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
                 </label>
                 <div id="disposal_plan_div">
-                  <label>Waste Disposal Plan Details
+                  <label><span data-i18n-key="label.waste_plan"></span>
                     <textarea name="disposal_plan_description" rows="3"></textarea>
                   </label>
                 </div>
               </div>
-              <h3>Other Information</h3>
-              <label>Do you require lab-tech support?
-                <input name="lab-tech_support" type="radio" value="Yes" /> Yes
-                <input name="lab-tech_support" type="radio" value="No" /> No
+              <h3><span data-i18n-key="h3.other"></span></h3>
+              <label><span data-i18n-key="label.lab_tech"></span>
+                <input name="lab-tech_support" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                <input name="lab-tech_support" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
               </label>
               <div id="labTechSupportDiv">
-                <label>What do you require support for?
+                <label><span data-i18n-key="label.lab_support"></span>
                   <textarea name="lab-tech_requirements" rows="3"></textarea>
                 </label>
               </div>
-              <label>Do you need after-hours access to the labs (including weekends and/or statutory holidays) <br />
-                <input name="after_hours" type="radio" value="Yes" /> Yes
-                <input name="after_hours" type="radio" value="No" /> No
+              <label><span data-i18n-key="label.after_hours"></span> <br />
+                <input name="after_hours" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                <input name="after_hours" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
               </label>
               <div id="afterHoursReasonDiv">
-                <label>What prevents you from completing your work between 8am–6pm Monday to Friday?
+                <label><span data-i18n-key="label.after_hours_reason"></span>
                   <textarea name="after-hours_reason" rows="3"></textarea>
                 </label>
               </div>
-              <label>Special Requirements
-                <textarea name="special_requirements" rows="3"></textarea>
-              </label>
-              <label>Past Difficulties Working in the north
+              <label><span data-i18n-key="label.difficulties"></span>
                 <textarea name="past_difficulties" rows="3"></textarea>
               </label>
-              <label>Other Application Documents Required by Your Institution (for example: ethics approval letter,
-                certificates, etc.)
+              <label><span data-i18n-key="label.other_docs"></span>
                 <textarea name="external_documents" rows="3"></textarea>
               </label>
               <input name="lab_certification" required="" type="checkbox" />
-              I understand that upon acceptance of my application, I will be
-              required to provide proof of WHMIS certification and certify that you have read the appropriate procedures
-              and directives associated with your work at CHARS. See <a href="https://whmis.org/"
+             <span data-i18n-key="box.labs_ack"></span><a href="https://whmis.org/"
                 target="_blank">whmis.org</a>.
             </label>
           </div>
         </div>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
-        </div>
       </div>
       <div id="section19" style="display: none;">
-        <h2>Section 19: Polar Continental Shelf Program (PCSP) Equipment</h2>
-        <label>Do you anticipate bringing equipment provided by the PCSP?*<br />
-          <input name="pcsp_equipment" required="" type="radio" value="Yes" /> Yes
-          <input name="pcsp_equipment" type="radio" value="No" /> No
+        <h2><span data-i18n-key="h2.s19"></span></h2>
+        <label><span data-i18n-key="label.pcsp"></span><br />
+          <input name="pcsp_equipment" required="" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+          <input name="pcsp_equipment" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
         </label>
-        <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" onclick="nextSection()" type="button">Next</button>
-        </div>
       </div>
       <div id="section20" style="display: none;">
-        <h2>Section 20: Submit Application</h2>
-        <p><strong>Before submitting your application, ensure the
-            following:</strong></p>
+        <h2><span data-i18n-key="h2.s20"></span></h2>
+        <p><strong><span data-i18n-key="strong.ensure"></span></strong></p>
         <ul>
-          <li>All questions are answered.</li>
-          <li>All team member and permit information is accurate.</li>
+          <li><span data-i18n-key="li.questions"></span></li>
+          <li><span data-i18n-key="li.accurate"></span></li>
         </ul>
-        <p>If your application is successful, you may be asked to provide:</p>
+        <p><span data-i18n-key="p.successful"></span></p>
         <ul>
-          <li>Names and contact info of all team members</li>
-          <li>Signed waivers and Terms of Conditions of Occupancy</li>
-          <li>Details on space and equipment needs</li>
-          <li>Proof of training and vehicle licenses</li>
-          <li>Identification Documentation (ID or Passport)</li>
+          <li><span data-i18n-key="li.names"></span></li>
+          <li><span data-i18n-key="li.waiver"></span></li>
+          <li><span data-i18n-key="li.space"></span></li>
+          <li><span data-i18n-key="li.training"></span></li>
+          <li><span data-i18n-key="li.id"></span></li>
         </ul>
-        <p>Details on CHARS public spaces: <a
-            href="https://www.canada.ca/en/polar-knowledge/charsusingcampus.html#public-areas" target="_blank">CHARS
-            Using the Campus</a></p>
-        <p>Information disclosure is subject to the <a
+        <p><span data-i18n-key="p.details"></span> <a
+            href="https://www.canada.ca/en/polar-knowledge/charsusingcampus.html#public-areas" target="_blank"><span data-i18n-key="a.chars"></span></a></p>
+        <p><span data-i18n-key="p.info"></span> <a
             href="https://www.canada.ca/en/treasury-board-secretariat/services/access-information-privacy/access-information/information-about-programs-information-holdings.html"
-            target="_blank">Access to Information Act</a> and <strong>Privacy
-            Act</strong>.</p>
+            target="_blank"><span data-i18n-key="a.info"></span></a></p>
         <div class="checkbox-group" data-required-group="">
           <label>
             <input name="privacy_agreement" required="" type="checkbox" />
-            I understand the above statement, confirm that the information in
-            this document is accurate, and agree to
-            POLAR requirements.
+            <span data-i18n-key="box.submit_ack"></span>
           </label>
         </div>
         <div style="margin-top: 1em;">
-          <button class="button" onclick="previousSection()" type="button">Previous</button>
-          <button class="button" type="submit">Submit Application</button>
+          <button class="button" type="submit"><span data-i18n-key="button.submit"></span></button>
         </div>
       </div>
+      <div id="navContainer" style="margin-top:1em;"></div>
     </form>
     <div id="thankYouMessage" style="display:none; text-align: center;">
-      <h2>Thank you for your application!</h2>
-      <p>Your responses have been submitted successfully.</p>
-      <p>You may now close this tab or download a copy of your submission below.</p>
-      <button class="button" onclick="downloadSubmission()" type="button">Download My Responses</button>
+      <h2><span data-i18n-key="h2.thanks"></span></h2>
+      <p><span data-i18n-key="p.submitted"></span></p>
+      <p><span data-i18n-key="p.close"></span></p>
+      <button class="button" onclick="downloadSubmission()" type="button"><span data-i18n-key="button.download"></span></button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" type="text/javascript"></script>
-
   </div>
+  <script src="translations.js"></script>
   <script src="script.js"></script>
+  
 </body>
 
 </html>
