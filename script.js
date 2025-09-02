@@ -1,24 +1,63 @@
-/*
- * script.js (FULL REORGANIZED)
- *
- * ⚠️ OVERVIEW:
- * - Section A: All helper & utility functions (unchanged code blocks)
- * - Section B: Bootstrap (DOMContentLoaded) wrapping
- *   • EmailJS init
- *   • Language switcher
- *   • Form initialization (progress, appId, countryOptions)
- *   • Submit handler (data build, table rendering, JSON send, UI updates)
- *   • Toggle listeners & dynamic updates
- *   • Download button hookup
- */
 
-// ---------------------------
-// SECTION A: ORIGINAL HELPERS
-// ---------------------------
+const nextBtn = document.querySelectorAll("form .next-btn");
+const prevBtn = document.querySelectorAll("form .previous-btn");
+const form = document.querySelector("form");
+// Section navigation
+//-------------------------------------------------------------------------
+const steps = Array.from(document.querySelectorAll("form .step"));
+//console.log(steps);
+
+function changeStep(btn) {
+  let index = 0;
+  const active = document.querySelector(".active");
+  index = steps.indexOf(active);
+  steps[index].classList.remove("active");
+  if (btn === "next") {
+    index++;
+  } else if (btn === "prev") {
+    index--;
+  }
+  steps[index].classList.add("active");
+}
+
+function validateStep(){
+  const active = document.querySelector(".active");
+  const fields=active.querySelectorAll("input, radio, checkbox, text, textarea, select");
+  return [...fields].every((field) => field.reportValidity());
+}
+nextBtn.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (!validateStep()) return;
+    changeStep("next");
+    updateProgressBar();
+  });
+});
+
+prevBtn.forEach((button) => {
+  button.addEventListener("click", () => {
+    changeStep("prev");
+    updateProgressBar();
+  });
+});
+
+function populate(dropdown_id){
+  if (dropdown_id === "institutionCountry"){
+    document.getElementById('institutionCountry').innerHTML = countryOptions;
+  }
+
+  applyTranslations(document.getElementById("languageSwitcher").value);
+}
+
+function updateProgressBar(){
+  const active = document.querySelector(".active");
+  index=steps.indexOf(active);
+  document.getElementById('progressBar').style.width = ((index + 1) / steps.length * 100) + '%';
+}
+//----------------------------------------------------------------------------------
 
 // 1) Country options HTML
 const countryOptions = `
-    <option value=""><span data-i18n-key="ph.select"></span></option>
+    <option value="" data-i18n-key="ph.select"></option>
     <option value="Canada">Canada</option>
     <option value="United States">United States</option>
     <option value="United Kingdom">United Kingdom</option>
@@ -251,6 +290,9 @@ const countryOptions = `
     <option value="Zambia">Zambia</option>
     <option value="Zimbabwe">Zimbabwe</option>
   `;
+
+
+
 // 2) Form progress helpers
 function saveProgress() {
   const formData = new FormData(document.getElementById("intakeForm"));
@@ -286,167 +328,24 @@ function loadProgress() {
   if (!isNaN(sectionIndex)) {
     currentSection = sectionIndex;
   }
-  showSection(currentSection);
 
   updateDepartureConstraints();
 }
 
-// 3) Section navigation
-const sections = [
-  "section1", "section2", "section3", "section4", "section5",
-  "section6", "section7", "section8", "section9", "section10", "section11",
-  "section12", "section13", "section14", "section15", "section16",
-  "section17", "section18", "section19", "section20"
-];
-
-function renderNavButtons() {
-  const lang = localStorage.getItem('lang') || 'en';       // your current language
-  const nav = document.getElementById('navContainer');
-  nav.innerHTML = '';                                      // clear old buttons
-
-  // PREVIOUS
-  if (currentSection > 0) {
-    const prev = document.createElement('button');
-    prev.className = 'button';
-    prev.setAttribute('data-i18n-key', 'button.previous');
-    prev.textContent = window.i18n[lang]['button.previous'];
-    prev.onclick = previousSection;
-    nav.appendChild(prev);
-  }
-
-  // NEXT
-  if (currentSection < sections.length - 1) {
-    const next = document.createElement('button');
-    next.className = 'button';
-    next.setAttribute('data-i18n-key', 'button.next');
-    next.textContent = window.i18n[lang]['button.next'];
-    next.onclick = nextSection;
-    nav.appendChild(next);
-  }
+//Date handling
+ //date handler
+function today_is_min_date(){
+  today=new Date().toISOString().split("T")[0];
+  return today;
 }
 
-let currentSection = 0;
-function showSection(index) {
-  sections.forEach((id, i) => {
-    const el = document.getElementById(id);
-    el.style.display = i === index ? 'block' : 'none';
-    setSectionValidation(id, i === index);
-  });
-  document.getElementById('progressBar').style.width = ((index + 1) / sections.length * 100) + '%';
-  currentSection = index;
-  renderNavButtons()
-}
-//For next button Logic
-function nextSection() {
-  const sectionEl = document.getElementById(sections[currentSection]);
-
-  // Validate required inputs before moving on
-  const requiredFields = sectionEl.querySelectorAll("input[required], select[required], textarea[required]");
-  let valid = true;
-
-  requiredFields.forEach(input => {
-    const isRadioGroup = input.type === "radio" && input.name;
-    if (isRadioGroup) {
-      const groupChecked = sectionEl.querySelectorAll(`input[name="${input.name}"]:checked`).length > 0;
-      if (!groupChecked) {
-        valid = false;
-        input.classList.add("error");
-      } else {
-        input.classList.remove("error");
-      }
-    } else if (!input.value.trim()) {
-      valid = false;
-      input.classList.add("error");
-    } else {
-      input.classList.remove("error");
-    }
-  });
-
-  // ✅ New: Validate required checkbox groups
-  const requiredCheckboxGroups = sectionEl.querySelectorAll('[data-required-group]');
-  requiredCheckboxGroups.forEach(group => {
-    const checkboxes = group.querySelectorAll('input[type="checkbox"]');
-
-    // Skip validation if group or any checkbox is hidden
-    const isHidden = group.offsetParent === null || Array.from(checkboxes).every(cb => cb.disabled || cb.offsetParent === null);
-    if (isHidden) return;
-
-    const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-    if (!anyChecked) {
-      valid = false;
-      group.classList.add("error");
-    } else {
-      group.classList.remove("error");
-    }
-  });
-
-
-  if (!valid) {
-    alert("Please complete all required fields before proceeding.");
-    return;
-  }
-
-  // Special skip logic
-  const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value;
-  if (sections[currentSection] === 'section4' && applicantType === 'Accommodation Only') {
-    currentSection = sections.indexOf('section20');
-    showSection(currentSection);
-    saveProgress();
-    return;
-  }
-
-  // Move to next section
-  if (currentSection < sections.length - 1) {
-    currentSection++;
-    showSection(currentSection);
-    saveProgress();
-  }
-}
-function previousSection() {
-  const applicantType = document.querySelector('input[name="applicant_type"]:checked')?.value;
-  if (sections[currentSection] === 'section20' && applicantType === 'Accommodation Only') {
-    currentSection = sections.indexOf('section4');
-    showSection(currentSection);
-    saveProgress();
-    return;
-  }
-  if (currentSection > 0) {
-    currentSection--;
-    showSection(currentSection);
-    saveProgress();
-  }
-}
-// 4) Validation & dynamic constraint helper
-function setSectionValidation(sectionId, enable) {
-  // Guard: ensure the section element exists
-  const sectionEl = document.getElementById(sectionId);
-  if (!sectionEl) {
-    console.warn(`⚠️ setSectionValidation: section "${sectionId}" not found in DOM`);
-    return;
-  }
-  // Select only required inputs within this section
-  const requiredFields = sectionEl.querySelectorAll("input[required], select[required], textarea[required]");
-  requiredFields.forEach(input => {
-    if (!enable) {
-      // Temporarily disable required on hidden sections
-      input.setAttribute('data-required', input.required);
-      input.required = false;
-    } else if (input.hasAttribute('data-required')) {
-      // Restore original required state
-      input.required = input.getAttribute('data-required') === 'true';
-      input.removeAttribute('data-required');
-    }
-  });
-}
 
 function updateDepartureConstraints() {
   const tbody = document.getElementById('groupsTable').querySelector('tbody');
-  const today = new Date().toISOString().split('T')[0];
   for (let row of tbody.rows) {
     const arrival = row.cells[1].querySelector('input');
     const departure = row.cells[2].querySelector('input');
     if (arrival) {
-      arrival.setAttribute('min', today);
       arrival.addEventListener('change', () => {
         if (departure) departure.min = arrival.value;
       });
@@ -459,6 +358,7 @@ function updateDepartureConstraints() {
 
 // Disassembly date must not be earlier than installation date
 const installInput = document.getElementById("installationDate");
+
 const disassemblyInput = document.getElementById("disassemblyDate");
 
 installInput.addEventListener("change", () => {
@@ -512,7 +412,7 @@ function toggleLabDetails(show) { document.getElementById('labDetails').style.di
 function toggleLabSelection(show) { document.getElementById('labSelection').style.display = show ? 'block' : 'none'; }
 function toggleEquipmentTable(show) { document.getElementById('equipmentTableSection').style.display = show ? 'block' : 'none'; }
 function togglePersonnelSupport(show) { document.getElementById('personnelSupportSection').style.display = show ? 'block' : 'none'; }
-function toggleSittingEquipmentDetails(show) {document.getElementById('sitting_equipment_details').style.display = show ? 'block' : 'none';}
+function toggleSittingEquipmentDetails(show) { document.getElementById('sitting_equipment_details').style.display = show ? 'block' : 'none'; }
 function handleShippingYes() {
   toggleShippingDetails(true);
   toggleAcknowledgmentCheckbox('hazardousAcknowledgment', 'hazardousAcknowledgmentGroup', true);
@@ -673,10 +573,10 @@ function addMemberRow() {
     <td><input type="text" name="member_last[]" required></td>
     <td>
       <select name="member_gender[]" required>
-        <option value=""><span data-i18n-key="ph.select"></span></option>
-        <option><span data-i18n-key="opt.male"></span></option>
-        <option><span data-i18n-key="opt.fem"></option>
-        <option><span data-i18n-key="label.type_other"></option>
+        <option value="" data-i18n-key="ph.select"></option>
+        <option data-i18n-key="opt.male"></option>
+        <option data-i18n-key="opt.fem"></option>
+        <option data-i18n-key="label.type_other"></option>
       </select>
     </td>
     <td>
@@ -700,35 +600,35 @@ function addEquipmentRow() {
   row.innerHTML = `
             <td>
               <select name="equipment_type[]" required>
-                <option value=""><span data-i18n-key="ph.select"></span></option>
-                <option><span data-i18n-key="opt.16_boat"></span></option>
-                <option><span data-i18n-key="opt.18_boat"></span></option>
-                <option><span data-i18n-key="opt.atv"></option>
-                <option><span data-i18n-key="opt.canoe"></option>
-                <option><span data-i18n-key="opt.covered_trailer"></option>
-                <option><span data-i18n-key="opt.electric_fence"></option>
-                <option><span data-i18n-key="opt.flatbed_trailer"></option>
-                <option><span data-i18n-key="opt.generator"></option>
-                <option><span data-i18n-key="opt.gps"></option>
-                <option><span data-i18n-key="opt.auger"></option>
-                <option><span data-i18n-key="opt.inflatable_boat"></option>
-                <option><span data-i18n-key="opt.sat_comm"></option>
-                <option><span data-i18n-key="opt.sat_phone"></option>
-                <option><span data-i18n-key="opt.snowmobile"></option>
-                <option><span data-i18n-key="opt.soil_auger"></option>
-                <option><span data-i18n-key="opt.toboggan"></option>
-                <option><span data-i18n-key="opt.camping"></option>
-                <option><span data-i18n-key="opt.helmet"></option>
-                <option><span data-i18n-key="opt.scuba"></option>
+                <option value="" data-i18n-key="ph.select"></option>
+                <option data-i18n-key="opt.16_boat"></option>
+                <option data-i18n-key="opt.18_boat"></option>
+                <option data-i18n-key="opt.atv"></option>
+                <option data-i18n-key="opt.canoe"></option>
+                <option data-i18n-key="opt.covered_trailer"></option>
+                <option data-i18n-key="opt.electric_fence"></option>
+                <option data-i18n-key="opt.flatbed_trailer"></option>
+                <option data-i18n-key="opt.generator"></option>
+                <option data-i18n-key="opt.gps"></option>
+                <option data-i18n-key="opt.auger"></option>
+                <option data-i18n-key="opt.inflatable_boat"></option>
+                <option data-i18n-key="opt.sat_comm"></option>
+                <option data-i18n-key="opt.sat_phone"></option>
+                <option data-i18n-key="opt.snowmobile"></option>
+                <option data-i18n-key="opt.soil_auger"></option>
+                <option data-i18n-key="opt.toboggan"></option>
+                <option data-i18n-key="opt.camping"></option>
+                <option data-i18n-key="opt.helmet"></option>
+                <option data-i18n-key="opt.scuba"></option>
               </select>
             </td>
             <td><input type="number" name="equipment_quantity[]" min="1" required></td>
             <td>
               <select name="equipment_licensed[]" required>
                 <option value="">--</option>
-                <option value="Yes"><span data-i18n-key="option.yes"></option>
-                <option value="No"><span data-i18n-key="option.no"></option>
-                <option value="Not Applicable"><span data-i18n-key="opt.na"></option>
+                <option value="Yes" data-i18n-key="option.yes"></option>
+                <option value="No" data-i18n-key="option.no"></option>
+                <option value="Not Applicable" data-i18n-key="opt.na"></option>
               </select>
             </td>
           `;
@@ -756,19 +656,20 @@ function addGroupRow(index = null) {
   const row = document.createElement("tr");
   row.innerHTML = `
             <td>Group ${groupNum}</td>
-            <td><input type="date" name="arrival_${groupNum}" required></td>
-            <td><input type="date" name="departure_${groupNum}" required></td>
+            <td><input id="adate" min=${today_is_min_date()} type="date" name="arrival_${groupNum}" required></td>
+            <td><input id="ddate" type="date" name="departure_${groupNum}" required></td>
             <td><input type="number" name="members_${groupNum}" min="1" required></td>
             <td>
               <select name="accommodation_${groupNum}" required>
                 <option value="">--</option>
-                <option value="Yes"><span data-i18n-key="option.yes"></span></option>
-                <option value="No"><span data-i18n-key="option.no"></option>
+                <option value="Yes" data-i18n-key="option.yes"></option>
+                <option value="No" data-i18n-key="option.no"></option>
                 </select>
                 </td>
                 `;
   tbody.appendChild(row);
   applyTranslations(document.getElementById("languageSwitcher").value);
+  updateDepartureConstraints();
 }
 
 // 8) Download submission helper
@@ -802,7 +703,6 @@ document.addEventListener('DOMContentLoaded', () => {
     switcher.addEventListener('change', e => {
       localStorage.setItem('lang', e.target.value);
       applyTranslations(e.target.value);
-      renderNavButtons();
     });
   }
 
@@ -814,7 +714,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('applicationId').value = appId;
 
   // 3) Populate country dropdown
-  document.getElementById('institutionCountry').innerHTML = countryOptions;
+  populate('institutionCountry');
+
+  updateProgressBar();
 
   // 4) Form submission handler
   document.getElementById('intakeForm').addEventListener('submit', e => {
@@ -842,35 +744,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       delete data[`arrival_${i}`]; delete data[`departure_${i}`]; delete data[`members_${i}`]; delete data[`accommodation_${i}`];
     }
-
-   /*  // 5) TABLE & SUMMARY LOGIC
-    // Team members table
-    if (data.team_members && Array.isArray(data.team_members)) {
-      const tbl = document.getElementById('summary-team-members'); tbl.innerHTML = '';
-      data.team_members.filter(m => m.first_name || m.last_name).forEach(m => {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${m.first_name}</td><td>${m.last_name}</td><td>${m.gender}</td><td>${m.nationality}</td><td>${m.member_group || ''}</td>`;
-        tbl.appendChild(row);
-      });
-    }
-    // Arrival groups table
-    if (data.arrival_groups) {
-      const t = document.getElementById('summary-arrival-groups'); t.innerHTML = '';
-      data.arrival_groups.forEach(g => {
-        const r = document.createElement('tr');
-        r.innerHTML = `<td>${g.id}</td><td>${g.arrival}</td><td>${g.departure}</td><td>${g.members}</td><td>${g.accommodation}</td>`;
-        t.appendChild(r);
-      });
-    }
-    // Equipment summary
-    if (data.equipment && Array.isArray(data.equipment)) {
-      const t = document.getElementById('summary-equipment'); t.innerHTML = '';
-      data.equipment.forEach(eq => {
-        const r = document.createElement('tr');
-        r.innerHTML = `<td>${eq.type}</td><td>${eq.quantity}</td><td>${eq.licensed}</td>`;
-        t.appendChild(r);
-      });
-    } */
 
     // 6) Send JSON via EmailJS
     const packagedJSON = JSON.stringify(data);
@@ -912,4 +785,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // 9) Download button
   document.getElementById('downloadJson')?.addEventListener('click', downloadSubmission);
 
+  //date handlers
+  installInput.min=today_is_min_date();
+  startInput.min=today_is_min_date();
+ 
 });

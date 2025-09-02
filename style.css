@@ -90,13 +90,14 @@ th {
 }
 
 /* Buttons */
-.button {
+button {
   background: #0066cc;
   color: white;
   border: none;
   padding: 0.75em 1.5em;
   border-radius: 4px;
   cursor: pointer;
+  margin: 1.75em 1em;
 }
 
 .button:hover {
@@ -148,4 +149,11 @@ th {
   display: flex;
   justify-content: flex-start; /* or flex‑start, flex‑end, as you prefer */
   gap: 1rem;               /* the space between each button */
+}
+
+.step {
+  display: none;
+}
+.step.active {
+  display: block;
 }
