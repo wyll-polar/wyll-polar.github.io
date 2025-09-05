@@ -295,20 +295,29 @@ const countryOptions = `
 
 // 2) Form progress helpers
 function saveProgress() {
-  const formData = new FormData(document.getElementById("intakeForm"));
+  const form = document.getElementById('intakeForm');
   const values = {};
-  for (let [key, value] of formData.entries()) {
-    if (!values[key]) {
-      values[key] = value;
+
+  // Only text inputs and textareas
+  const fields = form.querySelectorAll('input[type="text"][name], textarea[name]');
+
+  fields.forEach(el => {
+    const key = el.name;
+    const val = el.value;
+
+    if (values[key] === undefined) {
+      values[key] = val;
     } else if (Array.isArray(values[key])) {
-      values[key].push(value);
+      values[key].push(val);
     } else {
-      values[key] = [values[key], value];
+      values[key] = [values[key], val];
     }
-  }
-  localStorage.setItem("researchIntakeDraft", JSON.stringify(values));
-  localStorage.setItem("currentSectionIndex", currentSection.toString());
+  });
+
+  localStorage.setItem('researchIntakeDraft', JSON.stringify(values));
+  localStorage.setItem('currentSectionIndex', String(index));
 }
+
 function loadProgress() {
   const saved = localStorage.getItem("researchIntakeDraft");
   const sectionIndex = parseInt(localStorage.getItem("currentSectionIndex"), 10);
@@ -326,9 +335,10 @@ function loadProgress() {
     }
   }
   if (!isNaN(sectionIndex)) {
-    currentSection = sectionIndex;
+    steps[0].classList.remove("active");
+    steps[index].classList.add("active");
   }
-
+  
   updateDepartureConstraints();
 }
 
@@ -383,64 +393,47 @@ function applyTranslations(lang) {
   });
 }
 
+function get_inputs(div_id){
+  const inputs = document.querySelectorAll(`#${div_id} input, #${div_id} textarea`);
+  return inputs
+}
+
+function set_required(inputs){
+   inputs.forEach(input => {
+      input.required = true;
+    });
+}
+
+function unset_required(inputs){
+  inputs.forEach(input => {
+      input.required = "";
+      input.value = '';
+    });
+}
+
 // 5) Toggle helpers
-function toggleAcknowledgmentCheckbox(checkboxId, wrapperId, enable) {
-  const checkbox = document.getElementById(checkboxId);
-  const wrapper = document.getElementById(wrapperId);
 
-  if (!checkbox || !wrapper) return;
+function toggle(show, div_id){
+  const inputs=get_inputs(div_id);
+  if (show){
+    document.getElementById(div_id).style.display = 'block';
+    //special cases
+    if(div_id=='personnelSupportSection' && show){return;}
+    if(div_id=='labSelection' && show){
+      unset_required(inputs);
+      return;
+    }
 
-  if (enable) {
-    checkbox.disabled = false;
-    checkbox.required = true;
-    wrapper.classList.remove("disabled");
-    wrapper.classList.remove("error");
-  } else {
-    checkbox.checked = false;
-    checkbox.disabled = true;
-    checkbox.required = false;
-    wrapper.classList.add("disabled");
-    wrapper.classList.remove("error");
+    set_required(inputs);
   }
-}
-function togglePrimaryContact(show) { document.getElementById('primaryContactFields').style.display = show ? 'block' : 'none'; }
-function toggleFundingField(show) { document.getElementById('fundingField').style.display = show ? 'block' : 'none'; }
-function toggleStaffContact(show) { document.getElementById('staffContactField').style.display = show ? 'block' : 'none'; }
-function toggleShippingDetails(show) { document.getElementById('shippingDetails').style.display = show ? 'block' : 'none'; }
-function toggleTechnicalRequest(show) { document.getElementById('technicalRequestField').style.display = show ? 'block' : 'none'; }
-function toggleLabDetails(show) { document.getElementById('labDetails').style.display = show ? 'block' : 'none'; }
-function toggleLabSelection(show) { document.getElementById('labSelection').style.display = show ? 'block' : 'none'; }
-function toggleEquipmentTable(show) { document.getElementById('equipmentTableSection').style.display = show ? 'block' : 'none'; }
-function togglePersonnelSupport(show) { document.getElementById('personnelSupportSection').style.display = show ? 'block' : 'none'; }
-function toggleSittingEquipmentDetails(show) { document.getElementById('sitting_equipment_details').style.display = show ? 'block' : 'none'; }
-function handleShippingYes() {
-  toggleShippingDetails(true);
-  toggleAcknowledgmentCheckbox('hazardousAcknowledgment', 'hazardousAcknowledgmentGroup', true);
-}
-
-function handleShippingNo() {
-  toggleShippingDetails(false);
-  toggleAcknowledgmentCheckbox('hazardousAcknowledgment', 'hazardousAcknowledgmentGroup', false);
+  else{
+    document.getElementById(div_id).style.display = 'none'; 
+    unset_required(inputs);
+  }   
 }
 
 const startInput = document.getElementById("labUseStart");
 const endInput = document.getElementById("labUseEnd");
-const equipmentRadios = document.getElementsByName("bringing_equipment");
-const equipmentListDiv = document.getElementById("equipment_list_div");
-const leavingRadios = document.getElementsByName("leaving_equipment");
-const equipmentLeftDiv = document.getElementById("equipment_left_div");
-const hazardousRadios = document.getElementsByName("using_hazardous");
-const hazardousDetailsDiv = document.getElementById("hazardous_details_div");
-const ppeRadios = document.getElementsByName("has_ppe");
-const ppeDiv = document.getElementById("ppe_description_div");
-const disposalRadios = document.getElementsByName("has_disposal_plan");
-const disposalDiv = document.getElementById("disposal_plan_div");
-const labTechRadios = document.getElementsByName("lab-tech_support");
-const labTechDiv = document.getElementById("labTechSupportDiv");
-const afterHoursRadios = document.getElementsByName("after_hours");
-const afterHoursDiv = document.getElementById("afterHoursReasonDiv");
-const engageRadios = document.getElementsByName("engage_community");
-const engagementDiv = document.getElementById("engagementPlanDiv");
 
 //lab use end date can't be before lab use end date
 startInput.addEventListener("change", () => {
@@ -450,108 +443,6 @@ startInput.addEventListener("change", () => {
   }
 });
 
-//Toggle lab equipment
-equipmentRadios.forEach(radio => {
-  radio.addEventListener("change", () => {
-    if (radio.value === "Yes" && radio.checked) {
-      equipmentListDiv.style.display = "block";
-    } else if (radio.value === "No" && radio.checked) {
-      equipmentListDiv.style.display = "none";
-    }
-  });
-});
-
-//Toggle leaving behind lab equipment
-leavingRadios.forEach(radio => {
-  radio.addEventListener("change", () => {
-    if (radio.value === "Yes" && radio.checked) {
-      equipmentLeftDiv.style.display = "block";
-    } else if (radio.value === "No" && radio.checked) {
-      equipmentLeftDiv.style.display = "none";
-    }
-  });
-});
-
-
-
-
-hazardousRadios.forEach(radio => {
-  radio.addEventListener("change", () => {
-    if (radio.value === "Yes" && radio.checked) {
-      hazardousDetailsDiv.style.display = "block";
-    } else if (radio.value === "No" && radio.checked) {
-      hazardousDetailsDiv.style.display = "none";
-    }
-  });
-});
-
-
-// Hide the textarea initially
-ppeDiv.style.display = "none";
-
-ppeRadios.forEach(radio => {
-  radio.addEventListener("change", () => {
-    if (radio.value === "Yes" && radio.checked) {
-      ppeDiv.style.display = "block";
-    } else if (radio.value === "No" && radio.checked) {
-      ppeDiv.style.display = "none";
-    }
-  });
-});
-
-// Hide the textarea initially
-disposalDiv.style.display = "none";
-
-disposalRadios.forEach(radio => {
-  radio.addEventListener("change", () => {
-    if (radio.value === "Yes" && radio.checked) {
-      disposalDiv.style.display = "block";
-    } else if (radio.value === "No" && radio.checked) {
-      disposalDiv.style.display = "none";
-    }
-  });
-});
-
-// Hide the textarea initially
-labTechDiv.style.display = "none";
-
-labTechRadios.forEach(radio => {
-  radio.addEventListener("change", () => {
-    if (radio.value === "Yes" && radio.checked) {
-      labTechDiv.style.display = "block";
-    } else if (radio.value === "No" && radio.checked) {
-      labTechDiv.style.display = "none";
-    }
-  });
-});
-
-
-
-// Hide initially
-afterHoursDiv.style.display = "none";
-
-afterHoursRadios.forEach(radio => {
-  radio.addEventListener("change", () => {
-    if (radio.value === "Yes" && radio.checked) {
-      afterHoursDiv.style.display = "block";
-    } else if (radio.value === "No" && radio.checked) {
-      afterHoursDiv.style.display = "none";
-    }
-  });
-});
-
-// Hide initially
-engagementDiv.style.display = "none";
-
-engageRadios.forEach(radio => {
-  radio.addEventListener("change", () => {
-    if (radio.value === "Yes" && radio.checked) {
-      engagementDiv.style.display = "block";
-    } else if (radio.value === "No" && radio.checked) {
-      engagementDiv.style.display = "none";
-    }
-  });
-});
 
 
 // 6) Word counter validation
@@ -707,7 +598,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 2) Load saved progress & set Application ID
-  loadProgress();
+  //loadProgress();
   applyTranslations(document.getElementById("languageSwitcher").value);
   const appId = localStorage.getItem('applicationId') || crypto.randomUUID();
   localStorage.setItem('applicationId', appId);
@@ -753,34 +644,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 7) Store & UI update
     localStorage.setItem('researchIntakeSubmission', packagedJSON);
     form.style.display = 'none';
-    document.getElementById('thankYouMessage').style.display = 'block';
+    changeStep("next");
     localStorage.removeItem('researchIntakeDraft');
     localStorage.removeItem('currentSectionIndex');
   });
 
-
-
-  // 8) Toggle listeners & dynamic UI
-  const toggleGroups = [
-    { radiosName: 'bringing_equipment', divId: 'equipment_list_div' },
-    { radiosName: 'leaving_equipment', divId: 'equipment_left_div' },
-    { radiosName: 'using_hazardous', divId: 'hazardous_details_div' },
-    { radiosName: 'has_ppe', divId: 'ppe_description_div' },
-    { radiosName: 'has_disposal_plan', divId: 'disposal_plan_div' },
-    { radiosName: 'lab-tech_support', divId: 'labTechSupportDiv' },
-    { radiosName: 'after_hours', divId: 'afterHoursReasonDiv' },
-    { radiosName: 'engage_community', divId: 'engagementPlanDiv' }
-  ];
-  toggleGroups.forEach(({ radiosName, divId }) => {
-    const radios = document.getElementsByName(radiosName);
-    const div = document.getElementById(divId);
-    if (radios && div) {
-      div.style.display = 'none';
-      radios.forEach(r => r.addEventListener('change', e => {
-        div.style.display = e.target.value === 'Yes' ? 'block' : 'none';
-      }));
-    }
-  });
 
   // 9) Download button
   document.getElementById('downloadJson')?.addEventListener('click', downloadSubmission);

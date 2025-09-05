@@ -14,12 +14,12 @@
 
 <body>
   <header>
+    <img src="./logo.png" alt="logo" class="logo">
     <h1 for="title" data-i18n-key="h1.title">Research Intake Form</h1>
     <select id="languageSwitcher">
       <option value="en">English</option>
       <option value="fr">Français</option>
     </select>
-
   </header>
   <div class="container">
     <div class="progress-bar">
@@ -29,7 +29,7 @@
       <input id="applicationId" name="application_id" type="hidden" />
 
 
-      <div id="section1" class="step step-1 active">
+      <div id="section1" class="step step-1">
         <h2 for="s1" data-i18n-key="h2.s1"></h2>
         <label for="applicant_type" data-i18n-key="label.applicant_type">Applicant Type*</label>
         <div class="option-block">
@@ -50,8 +50,9 @@
             <span data-i18n-key="label.intake_3"></span></label>
         </div>
 
-        <label for="year" data-i18n-key="label.intake_year"></label>
+        <label for="year" data-i18n-key="label.intake_year" required ></label>
         <select name="year" id="intake_year">
+          <option value="">--</option>
           <option value="2025">2025</option>
           <option value="2026">2026</option>
           <option value="2027">2027</option>
@@ -115,7 +116,7 @@
             <option value="9">9</option>
           </select>
         </label>
-        <h3><span data-i18n-key="h2.arrivl"></span></h3>
+        <h3><span data-i18n-key="h2.arrival"></span></h3>
         <table id="groupsTable">
           <thead>
             <tr>
@@ -132,7 +133,7 @@
           <button class="button" onclick="addGroupRow()" type="button"><span
               data-i18n-key="button.add_group"></span></button>
         </div>
-        <h3><span data-i18n-key="h3.team_memebers"></span></h3>
+        <h3><span data-i18n-key="h3.team_members"></span></h3>
         <table id="membersTable">
           <thead>
             <tr>
@@ -216,9 +217,9 @@
       <div id="section7" class="step step-7">
         <h2><span data-i18n-key="h2.s7"></span></h2>
         <label><span data-i18n-key="label.funding"></span><br />
-          <input name="polar_funding" onclick="toggleFundingField(true)" required type="radio" value="Yes" /> <span
+          <input name="polar_funding" onclick="toggle(true,'fundingField')" required type="radio" value="Yes" /> <span
             data-i18n-key="option.yes"></span>
-          <input name="polar_funding" onclick="toggleFundingField(false)" required type="radio" value="No" /> <span
+          <input name="polar_funding" onclick="toggle(false, 'fundingField')" required type="radio" value="No" /> <span
             data-i18n-key="option.no"></span>
         </label>
         <div id="fundingField" style="display: none;">
@@ -233,9 +234,9 @@
       <div id="section8" class="step step-8">
         <h2><span data-i18n-key="h2.s8"></span></h2>
         <label><span data-i18n-key="label.partnership"></span><br />
-          <input name="polar_partnership" onclick="toggleStaffContact(true)" required type="radio" value="Yes" /> <span
+          <input name="polar_partnership" onclick="toggle(true, 'staffContactField')" required type="radio" value="Yes" /> <span
             data-i18n-key="option.yes"></span>
-          <input name="polar_partnership" onclick="toggleStaffContact(false)" type="radio" value="No" /> <span
+          <input name="polar_partnership" onclick="toggle(false, 'staffContactField')" type="radio" value="No" /> <span
             data-i18n-key="option.no"></span>
         </label>
         <div id="staffContactField" style="display: none;">
@@ -251,9 +252,9 @@
         <h2><span data-i18n-key="h2.s9"></span></h2>
         <label>
           <span data-i18n-key="label.equipment_sitting"></span><br />
-          <input name="sitting_equipment" onclick="toggleSittingEquipmentDetails(true)" required type="radio"
+          <input name="sitting_equipment" onclick="toggle(true, 'sitting_equipment_details')" required type="radio"
             value="Yes" /> <span data-i18n-key="option.yes"></span>
-          <input name="sitting_equipment" onclick="toggleSittingEquipmentDetails(false)" type="radio" value="No" />
+          <input name="sitting_equipment" onclick="toggle(false,'sitting_equipment_details')" type="radio" value="No" />
           <span data-i18n-key="option.no"></span>
         </label>
         <div id="sitting_equipment_details" style="display: none;">
@@ -285,10 +286,10 @@
       <div id="section10" class="step step-10">
         <h2><span data-i18n-key="h2.s10"></span></h2>
         <label><span data-i18n-key="label.st_support"></span><br />
-          <input name="st_technical_services" onclick="toggleTechnicalRequest(true)" required type="radio"
+          <input name="st_technical_services" onclick="toggle(true, 'technicalRequestField')" required type="radio"
             value="Yes" />
           <span data-i18n-key="option.yes"></span>
-          <input name="st_technical_services" onclick="toggleTechnicalRequest(false)" required type="radio"
+          <input name="st_technical_services" onclick="toggle(false, 'technicalRequestField')" required type="radio"
             value="No" />
           <span data-i18n-key="option.no"></span>
         </label>
@@ -306,10 +307,10 @@
       <div id="section11" class="step step-11">
         <h2><span data-i18n-key="h2.s11"></span></h2>
         <label><span data-i18n-key="label.engage_community"></span><br />
-          <input name="engage_community" required type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
-          <input name="engage_community" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
+          <input name="engage_community" required type="radio" value="Yes" /> <span data-i18n-key="option.yes" onclick="toggle(true, 'engagementPlanDiv')"></span>
+          <input name="engage_community" type="radio" value="No" onclick="toggle(false, 'engagementPlanDiv')" /> <span data-i18n-key="option.no"></span>
         </label>
-        <div id="engagementPlanDiv">
+        <div id="engagementPlanDiv" style="display: none;">
           <label>
             <span data-i18n-key="label.engagement_plan"></span><br />
             <textarea maxlength="1500" name="engagement_plan" oninput="countWords(this, 'engagementCounter')"
@@ -358,9 +359,9 @@
       <div id="section13" class="step step-13">
         <h2><span data-i18n-key="h2.s13"></span></h2>
         <label><span data-i18n-key="label.field_tech"></span><br />
-          <input name="request_technicians" onclick="togglePersonnelSupport(true)" required type="radio" value="Yes" />
+          <input name="request_technicians" onclick="toggle(true, 'personnelSupportSection')" required type="radio" value="Yes" />
           Yes
-          <input name="request_technicians" onclick="togglePersonnelSupport(false)" type="radio" value="No" /> <span
+          <input name="request_technicians" onclick="toggle(false, 'personnelSupportSection')" type="radio" value="No" /> <span
             data-i18n-key="option.no"></span>
         </label>
         <div id="personnelSupportSection" style="display: none;">
@@ -420,15 +421,15 @@
       <div id="section16" class="step step-16">
         <h2><span data-i18n-key="h2.s16"></span></h2>
         <label><span data-i18n-key="label.shipping"></span><br />
-          <input name="ship_materials" onclick="handleShippingYes()" required type="radio" value="Yes" /> <span
+          <input name="ship_materials" onclick="toggle(true,'shippingDetails')" required type="radio" value="Yes" /> <span
             data-i18n-key="option.yes"></span>
-          <input name="ship_materials" onclick="handleShippingNo()" type="radio" value="No" /> <span
+          <input name="ship_materials" onclick="toggle(false, 'shippingDetails')" type="radio" value="No" /> <span
             data-i18n-key="option.no"></span>
 
         </label>
         <div id="shippingDetails" style="display: none;">
           <label><span data-i18n-key="label.ship_hazards"></span><br />
-            <input name="hazardous_materials" required type="radio" value="Yes" /> <span
+            <input name="hazardous_materials"  required type="radio" value="Yes" /> <span
               data-i18n-key="option.yes"></span>
             <input name="hazardous_materials" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
           </label>
@@ -441,10 +442,8 @@
             Yes
             <input name="ship_equipment" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
           </label> -->
-        </div>
-        <div class="checkbox-group" data-required-group="" id="hazardousAcknowledgmentGroup">
           <label>
-            <input id="hazardousAcknowledgment" name="hazardous_acknowledgment" required type="checkbox" />
+            <input id="hazardousAcknowledgment" name="hazardous_acknowledgment" type="checkbox" />
             <span data-i18n-key="box.shipping_ack"></span>
           </label>
         </div>
@@ -482,12 +481,12 @@
       </div>
 
 
-      <div id="section18" class="step step-18">
+      <div id="section18" class="step step-18 active">
         <h2><span data-i18n-key="h2.s18"></span></h2>
         <label><span data-i18n-key="label.lab_space"></span><br />
-          <input name="lab_space" onclick="toggleLabDetails(true)" required type="radio" value="Yes" /> <span
+          <input name="lab_space" onclick="toggle(true, 'labDetails')" required type="radio" value="Yes" /> <span
             data-i18n-key="option.yes"></span>
-          <input name="lab_space" onclick="toggleLabDetails(false)" type="radio" value="No" /> <span
+          <input name="lab_space" onclick="toggle(false, 'labDetails')" type="radio" value="No" /> <span
             data-i18n-key="option.no"></span>
         </label>
         <div id="labDetails" style="display: none;">
@@ -501,9 +500,9 @@
             <input name="lab_fume_hoods" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
           </label>
           <label><span data-i18n-key="label.spec_lab"></span><br />
-            <input name="specific_lab" onclick="toggleLabSelection(true)" required type="radio" value="Yes" /> <span
+            <input name="specific_lab" onclick="toggle(true, 'labSelection')" required type="radio" value="Yes" /> <span
               data-i18n-key="option.yes"></span>
-            <input name="specific_lab" onclick="toggleLabSelection(false)" type="radio" value="No" /> <span
+            <input name="specific_lab" onclick="toggle(false, 'labSelection')" type="radio" value="No" /> <span
               data-i18n-key="option.no"></span>
           </label>
           <div id="labSelection" style="display: none;">
@@ -575,9 +574,9 @@
                 <textarea name="lab_instruments" rows="3"></textarea>
               </label>
               <label><span data-i18n-key="label.own_eq"></span>
-                <input name="bringing_equipment" required type="radio" value="Yes" /> <span
+                <input name="bringing_equipment" onclick="toggle(true, 'equipment_list_div')" required type="radio" value="Yes" /> <span
                   data-i18n-key="option.yes"></span>
-                <input name="bringing_equipment" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
+                <input name="bringing_equipment" onclick="toggle(false, 'equipment_list_div')" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
               </label>
               <div id="equipment_list_div" style="display: none;">
                 <label><span data-i18n-key="label.list_eq"></span>
@@ -585,9 +584,9 @@
                 </label>
               </div>
               <label><span data-i18n-key="label.leaving_eq"></span> <br />
-                <input name="leaving_equipment" required type="radio" value="Yes" /> <span
+                <input name="leaving_equipment" onclick="toggle(true, 'equipment_left_div')" required type="radio" value="Yes" /> <span
                   data-i18n-key="option.yes"></span>
-                <input name="leaving_equipment" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
+                <input name="leaving_equipment" onclick="toggle(false, 'equipment_left_div')" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
               </label>
               <div id="equipment_left_div" style="display: none;">
                 <label><span data-i18n-key="label.leaving_eq_list"></span>
@@ -596,28 +595,28 @@
               </div>
               <h3><span data-i18n-key="h3.hazards"></span></h3>
               <label><span data-i18n-key="label.lab_hazards"></span>
-                <input name="using_hazardous" required type="radio" value="Yes" /> <span
+                <input name="using_hazardous" onclick="toggle(true, 'hazardous_details_div')" required type="radio" value="Yes" /> <span
                   data-i18n-key="option.yes"></span>
-                <input name="using_hazardous" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
+                <input name="using_hazardous" onclick="toggle(false, 'hazardous_details_div')" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
               </label>
               <div id="hazardous_details_div" style="display: none;">
                 <label><span data-i18n-key="label.lab_hazard_type"></span>
                   <textarea name="hazardous_types" rows="3"></textarea>
                 </label>
                 <label><span data-i18n-key="label.ppe"></span>
-                  <input name="has_ppe" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
-                  <input name="has_ppe" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
+                  <input name="has_ppe" onclick="toggle(true, 'ppe_description_div')" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                  <input name="has_ppe" onclick="toggle(false, 'ppe_description_div')" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
                 </label>
-                <div id="ppe_description_div">
+                <div id="ppe_description_div" style="display: none;">
                   <label><span data-i18n-key="label.ppe_description"></span>
                     <textarea name="ppe_description" rows="3"></textarea>
                   </label>
                 </div>
                 <label><span data-i18n-key="label.waste"></span>
-                  <input name="has_disposal_plan" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
-                  <input name="has_disposal_plan" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
+                  <input name="has_disposal_plan" onclick="toggle(true, 'disposal_plan_div')" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                  <input name="has_disposal_plan" onclick="toggle(false, 'disposal_plan_div')" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
                 </label>
-                <div id="disposal_plan_div">
+                <div id="disposal_plan_div" style="display: none;">
                   <label><span data-i18n-key="label.waste_plan"></span>
                     <textarea name="disposal_plan_description" rows="3"></textarea>
                   </label>
@@ -625,19 +624,19 @@
               </div>
               <h3><span data-i18n-key="h3.other"></span></h3>
               <label><span data-i18n-key="label.lab_tech"></span>
-                <input name="lab-tech_support" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
-                <input name="lab-tech_support" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
+                <input name="lab-tech_support" onclick="toggle(true, 'labTechSupportDiv')" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                <input name="lab-tech_support" onclick="toggle(false, 'labTechSupportDiv')" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
               </label>
-              <div id="labTechSupportDiv">
+              <div id="labTechSupportDiv" style="display: none;">
                 <label><span data-i18n-key="label.lab_support"></span>
                   <textarea name="lab-tech_requirements" rows="3"></textarea>
                 </label>
               </div>
               <label><span data-i18n-key="label.after_hours"></span> <br />
-                <input name="after_hours" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
-                <input name="after_hours" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
+                <input name="after_hours" onclick="toggle(true, 'afterHoursReasonDiv')" type="radio" value="Yes" /> <span data-i18n-key="option.yes"></span>
+                <input name="after_hours" onclick="toggle(false, 'afterHoursReasonDiv')" type="radio" value="No" /> <span data-i18n-key="option.no"></span>
               </label>
-              <div id="afterHoursReasonDiv">
+              <div id="afterHoursReasonDiv" style="display: none;">
                 <label><span data-i18n-key="label.after_hours_reason"></span>
                   <textarea name="after-hours_reason" rows="3"></textarea>
                 </label>
@@ -702,15 +701,15 @@
         </div>
       </div>
       <div id="navContainer" style="margin-top:1em;"></div>
-    </form>
-
-    <div id="thankYouMessage" class="step step-21" display="none">
+       <div id="thankYouMessage" class="step step-21" display="none">
       <h2><span data-i18n-key="h2.thanks"></span></h2>
       <p><span data-i18n-key="p.submitted"></span></p>
       <p><span data-i18n-key="p.close"></span></p>
       <button class="button" onclick="downloadSubmission()" type="button"><span
           data-i18n-key="button.download"></span></button>
     </div>
+    </form>
+
 
 
 
