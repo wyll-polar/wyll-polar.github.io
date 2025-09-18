@@ -26,6 +26,9 @@ function validateStep(){
   return [...fields].every((field) => field.reportValidity());
 }
 nextBtn.forEach((button) => {
+  const applicant_type = new FormData(form).get('applicant_type');
+  console.log(applicant_type);
+  console.log("the test code has run");
   button.addEventListener("click", () => {
     if (!validateStep()) return;
     changeStep("next");
