@@ -13,6 +13,14 @@ function changeStep(btn) {
   index = steps.indexOf(active);
   steps[index].classList.remove("active");
   if (btn === "next") {
+    if(index==3){
+      const applicant_type = new FormData(form).get('applicant_type');
+      if (applicant_type=='Accommodation Only'){
+        index=19;
+        steps[index].classList.add("active");
+        return;
+      }
+    }
     index++;
   } else if (btn === "prev") {
     index--;
@@ -27,9 +35,6 @@ function validateStep(){
 }
 nextBtn.forEach((button) => {
   button.addEventListener("click", () => {
-    const applicant_type = new FormData(form).get('applicant_type');
-    console.log(applicant_type);
-    console.log("the test code has run");
     if (!validateStep()) return;
     changeStep("next");
     updateProgressBar();
@@ -646,7 +651,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 7) Store & UI update
     localStorage.setItem('researchIntakeSubmission', packagedJSON);
-    form.style.display = 'none';
     changeStep("next");
     localStorage.removeItem('researchIntakeDraft');
     localStorage.removeItem('currentSectionIndex');
