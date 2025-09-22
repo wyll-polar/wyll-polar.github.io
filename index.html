@@ -331,9 +331,9 @@
       <div id="section12" class="step step-12">
         <h2><span data-i18n-key="h2.s12"></span></h2>
         <label><span data-i18n-key="label.request_equipment"></span><br />
-          <input name="request_equipment" onclick="toggleEquipmentTable(true)" required type="radio" value="Yes" />
+          <input name="request_equipment" onclick="toggle(true, 'equipmentTableSection')" required type="radio" value="Yes" />
           <span data-i18n-key="option.yes"></span>
-          <input name="request_equipment" onclick="toggleEquipmentTable(false)" type="radio" value="No" /> <span
+          <input name="request_equipment" onclick="toggle(false, 'equipmentTableSection')" type="radio" value="No" /> <span
             data-i18n-key="option.no"></span>
         </label>
         <div id="equipmentTableSection" style="display: none;">
