@@ -19,7 +19,7 @@ window.i18n={
         'label.institution':'Name of University or Institution*',
         'label.country':'Country of University or Institution*',
         'ph.select':'-- Select --',
-        'label.address':'Full Mailing Address*',
+        'label.address':'Full mailing address of your institution*',
         'label.province':'Province/Territory/State*',
         'label.phone':'Phone Number* ',
         'h2.s3':'Section 3: Project Information',
@@ -246,7 +246,7 @@ window.i18n={
         'label.institution':'Nom de l’université ou de l’établissement',
         'label.country':'Pays de l’université ou de l’établissement',
         'ph.select':'--sélectionner--',
-        'label.address':'Adresse postale complète*',
+        'label.address':'Adresse postale complète de votre établissement*',
         'label.province':'Province, territoire ou état',
         'label.phone':'Numéro de téléphone*',
 
