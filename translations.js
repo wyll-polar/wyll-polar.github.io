@@ -163,7 +163,7 @@ window.i18n={
         'label.third_party':'Will you have a third party from town use the labs (youth, elders, contractors, etc.)',
         'label.lab_reqs':'Specific Lab Space Requirements',
         'label.multi-year':'Is this a multi-year project?',
-        'h3.sample':'Informations sur l\'échantillon et la méthodologie',
+        'h3.sample':'Sample and Methodology Information',
         'label.sample':'Type of Samples You Will Collect',
         'label.sample_storage':'Sample Storage (Room Temperature, 4, -20, -30, -80 ◦C)',
         'label.sample_frequency':'Sampling Frequency',
