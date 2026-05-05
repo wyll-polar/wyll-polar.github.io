@@ -1,6 +1,12 @@
-window.i18n={
+﻿window.i18n={
     en:{
         'h1.title': 'Research Intake Form',
+        'brand.station': 'Canadian High Arctic Research Station',
+        'label.language': 'Language',
+        'hero.eyebrow': 'Research logistics application',
+        'hero.title': 'Apply to conduct research at CHARS',
+        'hero.copy': 'Use this form to request research access, campus support, logistics, laboratory space, equipment, and related operational services.',
+        'progress.eyebrow': 'Application progress',        'success.kicker': 'Application submitted',
         'h2.s1':'Section 1: Applicant Type & Intake Period',
         'label.applicant_type':'Applicant Type*',
         'label.type_researcher': 'Researcher',
@@ -162,6 +168,7 @@ window.i18n={
         'label.lab_number':'Number of People Using Lab* ',
         'label.third_party':'Will you have a third party from town use the labs (youth, elders, contractors, etc.)',
         'label.lab_reqs':'Specific Lab Space Requirements',
+        'label.lab_selection':'Which laboratories do you wish to book?',
         'label.multi-year':'Is this a multi-year project?',
         'h3.sample':'Sample and Methodology Information',
         'label.sample':'Type of Samples You Will Collect',
@@ -193,7 +200,7 @@ window.i18n={
         'h2.s19':'Section 19: Polar Continental Shelf Program (PCSP) Equipment',
         'label.pcsp':'Do you anticipate bringing equipment provided by the PCSP?*',
         'h2.s20':'Section 20: Submit Application',
-        'stron.ensure':'Before submitting your application, ensure the following:',
+        'strong.ensure':'Before submitting your application, ensure the following:',
         'li.questions':'All questions are answered.',
         'li.accurate':'All team member and permit information is accurate.',
         'p.successful':'If your application is successful, you may be asked to provide:',
@@ -211,6 +218,7 @@ window.i18n={
         'h2.thanks':'Thank you for your application!',
         'p.submitted':'Your responses have been submitted successfully.',
         'p.close':'You may now close this tab or download a copy of your submission below.',
+        'p.confirmation_email_before':'If you do not receive a confirmation email within 24 hours, please contact CHARS Research Support at',
         'button.download':'Download My Responses',
         'label.intake_year':'Select the intake year'
 
@@ -226,6 +234,12 @@ window.i18n={
         //Section 1
         //-----------------------------------------------
         'h1.title':'Formulaire de demande de soutien à la recherche',
+        'brand.station': 'Station canadienne de recherche dans l’Extrême-Arctique',
+        'label.language': 'Langue',
+        'hero.eyebrow': 'Demande de soutien logistique à la recherche',
+        'hero.title': 'Présenter une demande pour mener des travaux de recherche à la SCREA',
+        'hero.copy': 'Utilisez ce formulaire pour demander un accès de recherche, du soutien sur le campus, de la logistique, des locaux de laboratoire, de l’équipement et des services opérationnels connexes.',
+        'progress.eyebrow': 'Progression de la demande',        'success.kicker': 'Demande soumise',
         'h2.s1':'Section 1 : Type de demandeur et période de soumission de la demande',
         'label.applicant_type':'Type de demandeur',
         'label.type_researcher':'Chercheur',
@@ -285,7 +299,7 @@ window.i18n={
         //Section 6
         //------------------------------------------------------
 
-        'h2.s6':'Section 6 : PSection 6 : Pertinence pour les habitants du Nord et les priorités de POLAIRE',
+        'h2.s6':'Section 6 : Pertinence pour les habitants du Nord et les priorités de POLAIRE',
         's&t_contribution':'Votre projet contribue-t-il à la mise en œuvre des priorités de POLAIRE? Dans l’affirmative, de quelle manière?*',
         'a.framework':'Cadre de sciences et de technologie de POLAIRE',
         'small.instructions':'Vous pouvez présenter les éléments en style télégraphique ou sous forme de puces.',
@@ -391,7 +405,7 @@ window.i18n={
         //section 17
         //--------------------------------------------------------------------
         'h2.s17':'Section 17 : Soutien opérationnel – Livraison de matériel (entreposage)',
-        'label.storage:name':'Si vous avez du matériel déjà entreposé à la SCREA, sous quel nom est-il entreposé?',
+        'label.storage_name':'Si vous avez du matériel déjà entreposé à la SCREA, sous quel nom est-il entreposé?',
         'strong.disclaimer':'Remarque : Si votre demande est acceptée, vous devrez fournir d’autres renseignements relatifs à l’expédition et à l’entreposage :',
         'li.shipping_methods':'méthode d’expédition;',
         'li.service_provider':'fournisseur de services',
@@ -428,6 +442,7 @@ window.i18n={
         'label.lab_end':'Date de fin de l’utilisation du laboratoire*',
         'label.lab_number':'Nombre de personnes qui utiliseront le laboratoire*',
         'label.lab_reqs':'Besoins relatifs au laboratoire particulier',
+        'label.lab_selection':'Quels laboratoires souhaitez-vous réserver?',
         'label.third_party':'Y a-t-il des tierces personnes de la ville qui utiliseront les laboratoires (jeunes, Aînés, entrepreneurs, etc.)?',
         'label.multi-year':'S’agit-il d’un projet pluriannuel?',
 
@@ -485,6 +500,7 @@ window.i18n={
         'h2.thanks':'Nous vous remercions d’avoir présenté cette demande',
         'p.submitted':'Vos réponses ont été soumises avec succès.',
         'p.close':'Vous pouvez maintenant fermer cet onglet ou télécharger une copie de votre demande ci-dessous.',
+        'p.confirmation_email_before':'Si vous ne recevez pas de courriel de confirmation dans les 24 heures, veuillez communiquer avec le soutien à la recherche de la SCREA à l’adresse',
         'button.download':'Télécharger mes réponses',
         'label.intake_year':'Sélectionnez l\'année d\'admission'
 
@@ -493,3 +509,10 @@ window.i18n={
 
     }
 };
+
+
+
+
+
+
+

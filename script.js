@@ -1,4 +1,4 @@
-
+﻿
 const nextBtn = document.querySelectorAll("form .next-btn");
 const prevBtn = document.querySelectorAll("form .previous-btn");
 const form = document.querySelector("form");
@@ -57,9 +57,24 @@ function populate(dropdown_id){
 }
 
 function updateProgressBar(){
-  const active = document.querySelector(".active");
-  index=steps.indexOf(active);
-  document.getElementById('progressBar').style.width = ((index + 1) / steps.length * 100) + '%';
+  const active = document.querySelector(".step.active");
+  const progressBar = document.getElementById("progressBar");
+  const progressStepText = document.getElementById("progressStepText");
+  const progressSectionTitle = document.getElementById("progressSectionTitle");
+  const progressPercentText = document.getElementById("progressPercentText");
+
+  if (!active || !progressBar) return;
+
+  const visibleSteps = steps.filter(step => step.id !== "thankYouMessage");
+  const stepIndex = visibleSteps.includes(active) ? visibleSteps.indexOf(active) : visibleSteps.length - 1;
+  const total = visibleSteps.length;
+  const percent = Math.min(100, Math.round(((stepIndex + 1) / total) * 100));
+  const sectionTitle = active.querySelector("h2")?.textContent.trim() || "Application submitted";
+
+  progressBar.style.width = `${percent}%`;
+  if (progressStepText) progressStepText.textContent = `Step ${Math.min(stepIndex + 1, total)} of ${total}`;
+  if (progressSectionTitle) progressSectionTitle.textContent = sectionTitle;
+  if (progressPercentText) progressPercentText.textContent = `${percent}% complete`;
 }
 //----------------------------------------------------------------------------------
 
@@ -602,6 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
     switcher.addEventListener('change', e => {
       localStorage.setItem('lang', e.target.value);
       applyTranslations(e.target.value);
+      updateProgressBar();
     });
   }
 
@@ -646,12 +662,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 6) Send JSON via EmailJS
     const packagedJSON = JSON.stringify(data);
-    console.log('📦 Packaged Data:', data);
+    console.log('Packaged Data:', data);
     emailjs.send('service_96vpr37', 'template_sjldwde', { message: packagedJSON });
 
     // 7) Store & UI update
     localStorage.setItem('researchIntakeSubmission', packagedJSON);
     changeStep("next");
+    updateProgressBar();
     localStorage.removeItem('researchIntakeDraft');
     localStorage.removeItem('currentSectionIndex');
   });
@@ -665,3 +682,6 @@ document.addEventListener('DOMContentLoaded', () => {
   startInput.min=today_is_min_date();
  
 });
+
+
+
