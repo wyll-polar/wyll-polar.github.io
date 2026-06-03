@@ -5,48 +5,151 @@ const form = document.querySelector("form");
 // Section navigation
 //-------------------------------------------------------------------------
 const steps = Array.from(document.querySelectorAll("form .step"));
-//console.log(steps);
+const formSteps = steps.filter((step) => step.id !== "thankYouMessage");
+const unlockedStepIndexes = new Set([0]);
+
+function getActiveStep() {
+  return document.querySelector("form .step.active");
+}
+
+function getActiveFormStepIndex() {
+  return formSteps.indexOf(getActiveStep());
+}
+
+function getNextStepIndex(index) {
+  if (index === 3) {
+    const applicantType = new FormData(form).get("applicant_type");
+    if (applicantType === "Accommodation Only") {
+      return 19;
+    }
+  }
+
+  return Math.min(index + 1, formSteps.length - 1);
+}
+
+function getPreviousStepIndex(index) {
+  if (index === 19) {
+    const applicantType = new FormData(form).get("applicant_type");
+    if (applicantType === "Accommodation Only") {
+      return 3;
+    }
+  }
+
+  return Math.max(index - 1, 0);
+}
+
+function isStepComplete(step) {
+  if (!step) return false;
+  const fields = Array.from(step.querySelectorAll("input, textarea, select"))
+    .filter((field) => field.type !== "hidden" && !field.disabled);
+
+  return fields.every((field) => field.checkValidity());
+}
+
+function unlockNextStepFrom(index) {
+  if (index < 0 || index >= formSteps.length) return;
+  if (!isStepComplete(formSteps[index])) return;
+
+  const nextIndex = getNextStepIndex(index);
+  unlockedStepIndexes.add(nextIndex);
+}
+
+function canNavigateToStep(index) {
+  return unlockedStepIndexes.has(index);
+}
+
+function showStep(index) {
+  if (index < 0 || index >= formSteps.length || !canNavigateToStep(index)) return;
+
+  const active = getActiveStep();
+  if (active) active.classList.remove("active");
+  formSteps[index].classList.add("active");
+  updateProgressBar();
+  renderSectionNav();
+}
+
+function showThankYouStep() {
+  const active = getActiveStep();
+  const thankYouStep = document.getElementById("thankYouMessage");
+  if (active) active.classList.remove("active");
+  thankYouStep?.classList.add("active");
+  updateProgressBar();
+  renderSectionNav();
+}
 
 function changeStep(btn) {
-  let index = 0;
-  const active = document.querySelector(".active");
-  index = steps.indexOf(active);
-  steps[index].classList.remove("active");
+  const index = getActiveFormStepIndex();
+
   if (btn === "next") {
-    if(index==3){
-      const applicant_type = new FormData(form).get('applicant_type');
-      if (applicant_type=='Accommodation Only'){
-        index=19;
-        steps[index].classList.add("active");
-        return;
-      }
+    if (index === formSteps.length - 1) {
+      showThankYouStep();
+      return;
     }
-    index++;
-  } else if (btn === "prev") {
-    index--;
+
+    unlockNextStepFrom(index);
+    showStep(getNextStepIndex(index));
+    return;
   }
-  steps[index].classList.add("active");
+
+  if (btn === "prev") {
+    showStep(getPreviousStepIndex(index));
+  }
 }
 
 function validateStep(){
-  const active = document.querySelector(".active");
+  const active = getActiveStep();
   const fields=active.querySelectorAll("input, radio, checkbox, text, textarea, select");
   return [...fields].every((field) => field.reportValidity());
 }
+
+function getStepLabel(step, index) {
+  const title = step.querySelector("h2")?.textContent.trim();
+  return title || `Section ${index + 1}`;
+}
+
+function renderSectionNav() {
+  const nav = document.getElementById("sectionNav");
+  if (!nav) return;
+
+  const activeIndex = getActiveFormStepIndex();
+  nav.innerHTML = formSteps.map((step, index) => {
+    const isActive = index === activeIndex;
+    const isUnlocked = canNavigateToStep(index);
+    const label = getStepLabel(step, index);
+    const stateClass = isActive ? " is-active" : isUnlocked ? "" : " is-locked";
+    const disabled = isUnlocked ? "" : " disabled";
+    return `<button class="section-nav-item${stateClass}" type="button" data-step-index="${index}"${disabled}>${label}</button>`;
+  }).join("");
+}
+
+function syncSectionNavigation() {
+  const activeIndex = getActiveFormStepIndex();
+  unlockNextStepFrom(activeIndex);
+  updateProgressBar();
+  renderSectionNav();
+}
+
 nextBtn.forEach((button) => {
   button.addEventListener("click", () => {
     if (!validateStep()) return;
     changeStep("next");
-    updateProgressBar();
   });
 });
 
 prevBtn.forEach((button) => {
   button.addEventListener("click", () => {
     changeStep("prev");
-    updateProgressBar();
   });
 });
+
+document.getElementById("sectionNav")?.addEventListener("click", (event) => {
+  const button = event.target.closest(".section-nav-item");
+  if (!button || button.disabled) return;
+  showStep(Number(button.dataset.stepIndex));
+});
+
+form?.addEventListener("input", syncSectionNavigation);
+form?.addEventListener("change", syncSectionNavigation);
 
 function populate(dropdown_id){
   if (dropdown_id === "institutionCountry"){
@@ -54,27 +157,35 @@ function populate(dropdown_id){
   }
 
   applyTranslations(document.getElementById("languageSwitcher").value);
+  syncSectionNavigation();
 }
 
 function updateProgressBar(){
   const active = document.querySelector(".step.active");
   const progressBar = document.getElementById("progressBar");
   const progressStepText = document.getElementById("progressStepText");
-  const progressSectionTitle = document.getElementById("progressSectionTitle");
   const progressPercentText = document.getElementById("progressPercentText");
 
   if (!active || !progressBar) return;
 
-  const visibleSteps = steps.filter(step => step.id !== "thankYouMessage");
+  const visibleSteps = formSteps;
   const stepIndex = visibleSteps.includes(active) ? visibleSteps.indexOf(active) : visibleSteps.length - 1;
   const total = visibleSteps.length;
   const percent = Math.min(100, Math.round(((stepIndex + 1) / total) * 100));
-  const sectionTitle = active.querySelector("h2")?.textContent.trim() || "Application submitted";
+  const lang = document.getElementById("languageSwitcher")?.value || "en";
+  const stepTemplate = window.i18n?.[lang]?.["progress.step_label"] || "Step {current} of {total}";
+  const percentTemplate = window.i18n?.[lang]?.["progress.percent_label"] || "{percent}% complete";
+  const current = Math.min(stepIndex + 1, total);
 
   progressBar.style.width = `${percent}%`;
-  if (progressStepText) progressStepText.textContent = `Step ${Math.min(stepIndex + 1, total)} of ${total}`;
-  if (progressSectionTitle) progressSectionTitle.textContent = sectionTitle;
-  if (progressPercentText) progressPercentText.textContent = `${percent}% complete`;
+  if (progressStepText) {
+    progressStepText.textContent = stepTemplate
+      .replace("{current}", current)
+      .replace("{total}", total);
+  }
+  if (progressPercentText) {
+    progressPercentText.textContent = percentTemplate.replace("{percent}", percent);
+  }
 }
 //----------------------------------------------------------------------------------
 
@@ -505,6 +616,7 @@ function addMemberRow() {
   `;
   table.appendChild(row);
   applyTranslations(document.getElementById("languageSwitcher").value);
+  syncSectionNavigation();
 
 }
 //Equipment list Table
@@ -548,6 +660,7 @@ function addEquipmentRow() {
           `;
   tbody.appendChild(row);
   applyTranslations(document.getElementById("languageSwitcher").value);
+  syncSectionNavigation();
 }
 
 //Arrival/Departure groups table
@@ -561,6 +674,7 @@ function generateGroupRows() {
 
   updateDepartureConstraints();
   applyTranslations(document.getElementById("languageSwitcher").value);
+  syncSectionNavigation();
 }
 
 function addGroupRow(index = null) {
@@ -583,6 +697,7 @@ function addGroupRow(index = null) {
                 `;
   tbody.appendChild(row);
   applyTranslations(document.getElementById("languageSwitcher").value);
+  syncSectionNavigation();
   updateDepartureConstraints();
 }
 
@@ -617,13 +732,14 @@ document.addEventListener('DOMContentLoaded', () => {
     switcher.addEventListener('change', e => {
       localStorage.setItem('lang', e.target.value);
       applyTranslations(e.target.value);
-      updateProgressBar();
+      syncSectionNavigation();
     });
   }
 
   // 2) Load saved progress & set Application ID
   //loadProgress();
   applyTranslations(document.getElementById("languageSwitcher").value);
+  syncSectionNavigation();
   const appId = localStorage.getItem('applicationId') || crypto.randomUUID();
   localStorage.setItem('applicationId', appId);
   document.getElementById('applicationId').value = appId;
@@ -631,7 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 3) Populate country dropdown
   populate('institutionCountry');
 
-  updateProgressBar();
+  syncSectionNavigation();
 
   // 4) Form submission handler
   document.getElementById('intakeForm').addEventListener('submit', e => {
@@ -668,7 +784,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 7) Store & UI update
     localStorage.setItem('researchIntakeSubmission', packagedJSON);
     changeStep("next");
-    updateProgressBar();
     localStorage.removeItem('researchIntakeDraft');
     localStorage.removeItem('currentSectionIndex');
   });
@@ -682,6 +797,4 @@ document.addEventListener('DOMContentLoaded', () => {
   startInput.min=today_is_min_date();
  
 });
-
-
 

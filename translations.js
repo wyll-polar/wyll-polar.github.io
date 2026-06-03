@@ -6,7 +6,10 @@
         'hero.eyebrow': 'Research logistics application',
         'hero.title': 'Apply to conduct research at CHARS',
         'hero.copy': 'Use this form to request research access, campus support, logistics, laboratory space, equipment, and related operational services.',
-        'progress.eyebrow': 'Application progress',        'success.kicker': 'Application submitted',
+        'progress.eyebrow': 'Application progress',
+        'progress.step_label': 'Step {current} of {total}',
+        'progress.percent_label': '{percent}% complete',
+        'success.kicker': 'Application submitted',
         'h2.s1':'Section 1: Applicant Type & Intake Period',
         'label.applicant_type':'Applicant Type*',
         'label.type_researcher': 'Researcher',
@@ -239,7 +242,10 @@
         'hero.eyebrow': 'Demande de soutien logistique à la recherche',
         'hero.title': 'Présenter une demande pour mener des travaux de recherche à la SCREA',
         'hero.copy': 'Utilisez ce formulaire pour demander un accès de recherche, du soutien sur le campus, de la logistique, des locaux de laboratoire, de l’équipement et des services opérationnels connexes.',
-        'progress.eyebrow': 'Progression de la demande',        'success.kicker': 'Demande soumise',
+        'progress.eyebrow': 'Progression de la demande',
+        'progress.step_label': 'Section {current} sur {total}',
+        'progress.percent_label': '{percent} % terminé',
+        'success.kicker': 'Demande soumise',
         'h2.s1':'Section 1 : Type de demandeur et période de soumission de la demande',
         'label.applicant_type':'Type de demandeur',
         'label.type_researcher':'Chercheur',
@@ -509,10 +515,3 @@
 
     }
 };
-
-
-
-
-
-
-
