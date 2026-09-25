@@ -590,9 +590,25 @@ function countWords(textarea, counterId) {
 }
 
 // 7) Dynamic row functions
+function getTranslation(key) {
+  const lang = document.getElementById("languageSwitcher")?.value || "en";
+  return window.i18n?.[lang]?.[key] || window.i18n?.en?.[key] || key;
+}
+
+function getGroupLabel(groupNum) {
+  return `${getTranslation("label.group")} ${groupNum}`;
+}
+
+function getGroupOptions(count) {
+  return [...Array(count || 9)]
+    .map((_, i) => `<option value="${i + 1}">${getGroupLabel(i + 1)}</option>`)
+    .join("");
+}
+
 function addMemberRow() {
   const table = document.getElementById("membersTable").querySelector("tbody");
   const row = document.createElement("tr");
+  const groupCount = getGroupRowCount();
   row.innerHTML = `
     <td><input type="text" name="member_first[]" required></td>
     <td><input type="text" name="member_last[]" required></td>
@@ -610,14 +626,37 @@ function addMemberRow() {
     <td>
       <select name="member_group[]" required>
         <option value="">--</option>
-       ${[...Array(9)].map((_, i) => `<option value="${i + 1}">Group ${i + 1}</option>`).join("")}
+       ${getGroupOptions(groupCount)}
       </select>
+    </td>
+    <td>
+      <button class="button row-delete-btn" onclick="removeMemberRow(this)" type="button">
+        <span data-i18n-key="button.delete"></span>
+      </button>
     </td>
   `;
   table.appendChild(row);
   applyTranslations(document.getElementById("languageSwitcher").value);
   syncSectionNavigation();
 
+}
+
+function getGroupRowCount() {
+  return document.getElementById("groupsTable").querySelector("tbody").rows.length;
+}
+
+function removeMemberRow(button) {
+  button.closest("tr")?.remove();
+  syncSectionNavigation();
+}
+
+function removeGroupRow(button) {
+  button.closest("tr")?.remove();
+  renumberGroupRows();
+  syncGroupCountSelect();
+  updateMemberGroupOptions();
+  updateDepartureConstraints();
+  syncSectionNavigation();
 }
 //Equipment list Table
 function addEquipmentRow() {
@@ -673,17 +712,19 @@ function generateGroupRows() {
   }
 
   updateDepartureConstraints();
+  updateMemberGroupOptions();
   applyTranslations(document.getElementById("languageSwitcher").value);
   syncSectionNavigation();
 }
 
 function addGroupRow(index = null) {
   const tbody = document.getElementById("groupsTable").querySelector("tbody");
+  if (!index && tbody.children.length >= 9) return;
   const currentCount = tbody.children.length + 1;
   const groupNum = index || currentCount;
   const row = document.createElement("tr");
   row.innerHTML = `
-            <td>Group ${groupNum}</td>
+            <td class="group-label">${getGroupLabel(groupNum)}</td>
             <td><input id="adate" min=${today_is_min_date()} type="date" name="arrival_${groupNum}" required></td>
             <td><input id="ddate" type="date" name="departure_${groupNum}" required></td>
             <td><input type="number" name="members_${groupNum}" min="1" required></td>
@@ -694,11 +735,48 @@ function addGroupRow(index = null) {
                 <option value="No" data-i18n-key="option.no"></option>
                 </select>
                 </td>
+                <td>
+                  <button class="button row-delete-btn" onclick="removeGroupRow(this)" type="button">
+                    <span data-i18n-key="button.delete"></span>
+                  </button>
+                </td>
                 `;
   tbody.appendChild(row);
+  renumberGroupRows();
+  syncGroupCountSelect();
+  updateMemberGroupOptions();
   applyTranslations(document.getElementById("languageSwitcher").value);
   syncSectionNavigation();
   updateDepartureConstraints();
+}
+
+function renumberGroupRows() {
+  const rows = document.getElementById("groupsTable").querySelector("tbody").rows;
+  [...rows].forEach((row, index) => {
+    const groupNum = index + 1;
+    row.querySelector(".group-label").textContent = getGroupLabel(groupNum);
+    row.cells[1].querySelector("input").name = `arrival_${groupNum}`;
+    row.cells[2].querySelector("input").name = `departure_${groupNum}`;
+    row.cells[3].querySelector("input").name = `members_${groupNum}`;
+    row.cells[4].querySelector("select").name = `accommodation_${groupNum}`;
+  });
+}
+
+function syncGroupCountSelect() {
+  const groupCount = getGroupRowCount();
+  const select = document.getElementById("groupCount");
+  select.value = groupCount ? String(groupCount) : "";
+}
+
+function updateMemberGroupOptions() {
+  const groupCount = getGroupRowCount();
+  const options = '<option value="">--</option>' + getGroupOptions(groupCount);
+
+  document.querySelectorAll('select[name="member_group[]"]').forEach(select => {
+    const selectedValue = select.value;
+    select.innerHTML = options;
+    select.value = Number(selectedValue) <= groupCount ? selectedValue : "";
+  });
 }
 
 // 8) Download submission helper
@@ -732,6 +810,8 @@ document.addEventListener('DOMContentLoaded', () => {
     switcher.addEventListener('change', e => {
       localStorage.setItem('lang', e.target.value);
       applyTranslations(e.target.value);
+      renumberGroupRows();
+      updateMemberGroupOptions();
       syncSectionNavigation();
     });
   }

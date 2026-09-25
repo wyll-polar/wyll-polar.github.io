@@ -88,9 +88,12 @@ ul { color: #304050; } li { margin-bottom: 6px; }
 .compact-options label { width: 100%; }
 th, td { overflow-wrap: normal; word-break: normal; }
 #membersTable { table-layout: fixed; }
-#membersTable th, #membersTable td { width: 20%; }
+#membersTable th, #membersTable td { width: 17%; }
+#membersTable th:last-child, #membersTable td:last-child { width: 15%; }
 #groupsTable th:first-child, #groupsTable td:first-child { min-width: 64px; white-space: nowrap; }
 #groupsTable th, #membersTable th, #equipmentTable th { white-space: normal; }
+.row-delete-btn { min-height: 38px; margin: 0; padding: 0 12px; border-color: #d9a1a6; background: #fff5f5; color: #8a1f29; }
+.row-delete-btn:hover { border-color: #c77b82; background: #ffe8e8; color: #6f1620; }
 .section-nav-wrap { min-height: 0; max-height: 472px; margin-top: 18px; padding-top: 16px; overflow-y: auto; border-top: 1px solid var(--line); scrollbar-width: thin; scrollbar-color: #d7b67d #f7f2ea; }
 .section-nav-wrap::-webkit-scrollbar { width: 10px; }
 .section-nav-wrap::-webkit-scrollbar-track { background: #f7f2ea; border-radius: 999px; }
